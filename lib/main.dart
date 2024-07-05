@@ -89,8 +89,8 @@ class _MyHomePageState extends State<MyHomePage> {
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
-    body: jsonEncode(<String, dynamic>{
-      'kakao_id': user.id,
+    body: jsonEncode(<String, String>{
+      'kakao_id': user.id.toString(),
       'nickname': user.kakaoAccount?.profile?.nickname ?? '',
     }),
   );
