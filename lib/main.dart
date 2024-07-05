@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Flutter와 네이티브 플랫폼 간의 상호작용
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   KakaoSdk.init(nativeAppKey: '1c1884724b665157347d412727279fcb'); // 카카오 sdk 초기화
@@ -45,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _loginWithKakao() async {
     try {
+
       bool isInstalled = await isKakaoTalkInstalled();
       if (isInstalled) {
         try {
@@ -59,6 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       } else {
         try {
+          print("키해시 : ");
+          print(await KakaoSdk.origin);
           OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
           print('카카오계정으로 로그인 성공 ${token.accessToken}');
         } catch (error) {
