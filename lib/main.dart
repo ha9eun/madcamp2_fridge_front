@@ -83,23 +83,24 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _sendUserInfoToServer(User user, OAuthToken token) async {
-    final response = await http.post(
-      Uri.parse('http://localhost:3000/kakao/save_user/'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'kakao_id': user.id.toString(),
-        'nickname': user.kakaoAccount.profile.nickname ?? '',
-      }),
-    );
+  final response = await http.post(
+    Uri.parse('http://143.248.194.122:3000/kakao/save_user/'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'kakao_id': user.id.toString(),
+      'nickname': user.kakaoAccount?.profile?.nickname ?? '',
+    }),
+  );
 
-    if (response.statusCode == 200) {
-      print('사용자 정보 저장 성공');
-    } else {
-      print('사용자 정보 저장 실패');
-    }
+  if (response.statusCode == 200) {
+    print('사용자 정보 저장 성공');
+  } else {
+    print('사용자 정보 저장 실패');
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
