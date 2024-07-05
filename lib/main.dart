@@ -46,8 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _loginWithKakao() async {
     try {
-      print("키해시 : ");
-      print(await KakaoSdk.origin);
       bool isInstalled = await isKakaoTalkInstalled();
       if (isInstalled) {
         try {
@@ -62,7 +60,6 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       } else {
         try {
-
           OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
           print('카카오계정으로 로그인 성공 ${token.accessToken}');
         } catch (error) {
