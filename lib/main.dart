@@ -12,7 +12,7 @@ void main() {
   KakaoSdk.init(nativeAppKey: Config.appKey); // 카카오 SDK 초기화
 
   runApp(
-    ChangeNotifierProvider(
+    ChangeNotifierProvider( //Provider를 사용해 뷰모델 설정
       create: (context) => UserViewModel(),
       child: MyApp(),
     ),
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: '냉장고를 부탁해',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,

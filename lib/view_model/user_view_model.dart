@@ -3,19 +3,23 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fridge/model/user_service.dart';
 
+// 사용자의 상태를 관리(사용자 정보, 로그인 여부 등)
 class UserViewModel extends ChangeNotifier {
   String _nickname = '';
   String _kakaoId = '';
   bool _isLoggedIn = false;
 
+  //private 변수를 외부에서 읽을 수 있도록 해주는 getter 메소드
   String get nickname => _nickname;
   String get kakaoId => _kakaoId;
   bool get isLoggedIn => _isLoggedIn;
 
+  // 생성자
   UserViewModel() {
     _loadUserInfo();
   }
 
+  // SharedPreferences에서 정보를 로드하고 클래스의 상태 설정
   Future<void> _loadUserInfo() async {
     final prefs = await SharedPreferences.getInstance();
     _nickname = prefs.getString('nickname') ?? '';
@@ -55,6 +59,25 @@ class UserViewModel extends ChangeNotifier {
     }
   }
 
+  Future<bool> checkLoginStatus() async {
+    try {
+      var tokenInfo = await UserApi.instance.accessTokenInfo();
+      if (tokenInfo != null) {
+        _isLoggedIn = true;
+        notifyListeners();
+        return true;
+      } else {
+        _isLoggedIn = false;
+        notifyListeners();
+        return false;
+      }
+    } catch (error) {
+      _isLoggedIn = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<void> loginWithKakao(BuildContext context) async {
     try {
       bool isInstalled = await isKakaoTalkInstalled();
@@ -71,10 +94,10 @@ class UserViewModel extends ChangeNotifier {
   }
 
   Future<void> _handleLoginSuccess(OAuthToken token, BuildContext context) async {
-    bool success = await UserService.getUserInfoAndSendToServer(token);
+    bool success = await UserService.getUserInfoAndSendToServer(token); //카카오에서 정보를 받아 서버로 전송
     if (success) {
-      await fetchAndSaveUserInfo();
-      Navigator.pushReplacementNamed(context, '/home');
+      await fetchAndSaveUserInfo(); //상태에 업데이트
+      Navigator.pushReplacementNamed(context, '/home'); // 홈화면으로 이동
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('서버로 사용자 정보 전송 실패. 다시 시도해주세요.')),
