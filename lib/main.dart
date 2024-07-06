@@ -87,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _sendUserInfoToServer(User user, OAuthToken token) async {
 
   final response = await http.post(
-    Uri.parse('http://143.248.194.122:3000/kakao/save_user/'),
+    Uri.parse('http://143.248.194.122:3000/auth/kakao/'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
