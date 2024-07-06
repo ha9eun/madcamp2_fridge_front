@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fridge/view/my_page.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,7 +13,7 @@ class _HomePageState extends State<HomePage> {
   static List<Widget> _widgetOptions = <Widget>[
     Text('탭 1', style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
     Text('탭 2', style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-    Text('탭 3', style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+    MyPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -23,9 +25,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Page'),
-      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
@@ -40,8 +39,8 @@ class _HomePageState extends State<HomePage> {
             label: '탭 2',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: '탭 3',
+            icon: Icon(Icons.person),
+            label: '마이페이지',
           ),
         ],
         currentIndex: _selectedIndex,
