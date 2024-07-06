@@ -16,7 +16,7 @@ class RecipeService {
   }
 
   static Future<RecipeDetail> fetchRecipeDetail(int recipeId) async {
-    final response = await http.get(Uri.parse('${Config.apiUrl}/recipes/$recipeId'));
+    final response = await http.get(Uri.parse('${Config.apiUrl}/recipes/$recipeId/'));
 
     if (response.statusCode == 200) {
       return RecipeDetail.fromJson(jsonDecode(response.body));
