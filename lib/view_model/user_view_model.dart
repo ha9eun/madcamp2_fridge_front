@@ -125,6 +125,7 @@ class UserViewModel extends ChangeNotifier {
     try {
       await UserApi.instance.logout();
       await _clearUserInfo();
+      print('로그아웃 성공');
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => LoginPage()),

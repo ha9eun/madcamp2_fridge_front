@@ -35,25 +35,24 @@ class MyPage extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('마이페이지'),
-        backgroundColor: Colors.deepPurple, // 앱바 배경색
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () {
-              // 설정 페이지로 이동
-            },
-          ),
-        ],
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, // 좌측 정렬
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            SizedBox(height: 20), // 위쪽 여백 추가
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                icon: Icon(Icons.settings, color: Colors.deepPurple),
+                onPressed: () {
+                  // 설정 페이지로 이동
+                },
+              ),
+            ),
+            SizedBox(height: 20), // 설정 버튼 아래 여백 추가
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
                   '${userViewModel.nickname} 님',
