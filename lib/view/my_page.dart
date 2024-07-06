@@ -1,11 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../view_model/user_view_model.dart';
+import 'package:fridge/view_model/user_view_model.dart';
 
 class MyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context);
+
+    void _confirmLogout() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('로그아웃'),
+            content: Text('로그아웃 하시겠습니까?'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // 다이얼로그 닫기
+                },
+                child: Text('취소'),
+              ),
+              TextButton(
+                onPressed: () {
+                  userViewModel.logout(context);
+                  Navigator.of(context).pop(); // 다이얼로그 닫기
+                },
+                child: Text('확인'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('마이페이지'),
@@ -36,9 +64,7 @@ class MyPage extends StatelessWidget {
                 ),
                 IconButton(
                   icon: Icon(Icons.logout, color: Colors.deepPurple),
-                  onPressed: () {
-                    // 로그아웃 기능 구현
-                  },
+                  onPressed: _confirmLogout,
                 ),
               ],
             ),

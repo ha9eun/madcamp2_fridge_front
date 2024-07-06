@@ -34,7 +34,7 @@ class LoginPage extends StatelessWidget {
                 width: 250,
                 height: 38,
                 child: Image.asset(
-                  'assets/images/kakao_login_button.png',
+                  'assets/images/kakao_login_medium_wide.png',
                   fit: BoxFit.contain,
                 ),
               ),

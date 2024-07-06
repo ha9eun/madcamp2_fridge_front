@@ -41,6 +41,12 @@ class UserViewModel extends ChangeNotifier {
     await prefs.setString('kakao_id', kakaoId);
   }
 
+  Future<void> _clearUserInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('nickname');
+    await prefs.remove('kakao_id');
+  }
+
   Future<bool> _fetchAndSaveUserInfo() async {
     try {
       User user = await UserApi.instance.me();
@@ -113,5 +119,18 @@ class UserViewModel extends ChangeNotifier {
       print('카카오톡 설치 여부 확인 실패 $error');
     }
     return false;
+  }
+
+  Future<void> logout(BuildContext context) async {
+    try {
+      await UserApi.instance.logout();
+      await _clearUserInfo();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    } catch (error) {
+      print('로그아웃 실패: $error');
+    }
   }
 }
