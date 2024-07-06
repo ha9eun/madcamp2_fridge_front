@@ -6,14 +6,18 @@ import 'view_model/user_view_model.dart';
 import 'view/login_page.dart';
 import 'view/home_page.dart';
 import 'view/splash_screen.dart';
+import 'view_model/recipe_view_model.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   KakaoSdk.init(nativeAppKey: Config.appKey); // 카카오 SDK 초기화
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => UserViewModel(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserViewModel()),
+        ChangeNotifierProvider(create: (context) => RecipeViewModel()..fetchRecipes()),
+      ],
       child: MyApp(),
     ),
   );
