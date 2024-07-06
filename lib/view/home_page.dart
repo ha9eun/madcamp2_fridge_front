@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fridge/view/my_page.dart';
+import 'package:fridge/view/recipe_list_view.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,9 +12,9 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   static List<Widget> _widgetOptions = <Widget>[
-    Text('탭 1', style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-    Text('탭 2', style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
     MyPage(),
+    RecipeListView(),
+    Text('커뮤니티', style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
   ];
 
   void _onItemTapped(int index) {
@@ -31,6 +32,10 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: '마이페이지',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: '탭 1',
           ),
@@ -38,10 +43,7 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.business),
             label: '탭 2',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '마이페이지',
-          ),
+          
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
