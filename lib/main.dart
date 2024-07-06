@@ -5,10 +5,11 @@ import 'package:fridge/view_model/user_view_model.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:fridge/config.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  KakaoSdk.init(nativeAppKey: '1c1884724b665157347d412727279fcb'); // 카카오 sdk 초기화
+  KakaoSdk.init(nativeAppKey: Config.appKey); // 카카오 sdk 초기화
 
   runApp(const MyApp());
 }
