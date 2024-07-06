@@ -37,20 +37,9 @@ class MyPage extends StatelessWidget {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: <Widget>[
             SizedBox(height: 20), // 위쪽 여백 추가
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                icon: Icon(Icons.settings, color: Colors.deepPurple),
-                onPressed: () {
-                  // 설정 페이지로 이동
-                },
-              ),
-            ),
-            SizedBox(height: 20), // 설정 버튼 아래 여백 추가
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -69,7 +58,7 @@ class MyPage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             Divider(), // 구분선 추가
-            // 필요한 추가 내용 여기에 추가
+            // 다른 UI 요소 추가
           ],
         ),
       ),
