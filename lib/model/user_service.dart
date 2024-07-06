@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-
+import 'package:fridge/config.dart';
 class UserService {
   static Future<void> getUserInfoAndSendToServer(OAuthToken token) async {
     try {
@@ -14,7 +14,7 @@ class UserService {
 
   static Future<void> sendUserInfoToServer(User user, OAuthToken token) async {
     final response = await http.post(
-      Uri.parse('http://143.248.194.122:3000/auth/kakao/'),
+      Uri.parse('${Config.apiUrl}/auth/kakao/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
