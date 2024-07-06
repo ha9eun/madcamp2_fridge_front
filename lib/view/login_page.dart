@@ -1,43 +1,30 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fridge/view_model/user_view_model.dart';
 
 class LoginPage extends StatelessWidget {
-  final String title;
   final UserViewModel viewModel;
 
-  LoginPage({required this.title, required this.viewModel});
+  LoginPage({required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(title),
-      ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '${viewModel.counter}',
-              style: Theme.of(context).textTheme.headlineMedium,
+            GestureDetector(
+              onTap: viewModel.loginWithKakao,
+              child: Image.asset('assets/images/kakao_login_medium_wide.png',
+                width: 300,
+                height: 45,
+              ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: viewModel.loginWithKakao,
-              child: const Text('카카오 로그인'),
-            ),
+            SizedBox(height: 50),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: viewModel.incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
     );
   }
-
-
 }
