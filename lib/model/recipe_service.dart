@@ -8,7 +8,7 @@ class RecipeService {
     final response = await http.get(Uri.parse('${Config.apiUrl}/recipes/'));
 
     if (response.statusCode == 200) {
-      List<dynamic> data = jsonDecode(response.body);
+      List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
       return data.map((recipe) => Recipe.fromJson(recipe)).toList();
     } else {
       throw Exception('Failed to load recipes');
@@ -19,7 +19,7 @@ class RecipeService {
     final response = await http.get(Uri.parse('${Config.apiUrl}/recipes/$recipeId/'));
 
     if (response.statusCode == 200) {
-      return RecipeDetail.fromJson(jsonDecode(response.body));
+      return RecipeDetail.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
       throw Exception('Failed to load recipe detail');
     }

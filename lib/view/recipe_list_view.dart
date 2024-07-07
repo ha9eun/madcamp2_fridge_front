@@ -48,10 +48,6 @@ class RecipeListView extends StatelessWidget {
                                 topLeft: Radius.circular(15),
                                 topRight: Radius.circular(15),
                               ),
-                              image: DecorationImage(
-                                image: NetworkImage('https://via.placeholder.com/150'),
-                                fit: BoxFit.cover,
-                              ),
                             ),
                           ),
                         ),
