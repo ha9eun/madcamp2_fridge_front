@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_model/community_view_model.dart';
 import '../model/board_model.dart';
+import 'add_post_page.dart';
+import 'post_detail_page.dart';
 
 class CommunityView extends StatelessWidget {
   @override
@@ -21,9 +23,14 @@ class CommunityView extends StatelessWidget {
                 Board board = viewModel.boards[index];
                 return ListTile(
                   title: Text(board.title),
-                  subtitle: Text(board.writerId),
+                  subtitle: Text(board.writerNickname ?? 'Anonymous'),
                   onTap: () {
-                    // Navigate to post details
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PostDetailPage(postId: board.boardId),
+                      ),
+                    );
                   },
                 );
               },
@@ -33,7 +40,12 @@ class CommunityView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to add post screen
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddPostPage(writerId: 'currentUserId'), // Replace with actual current user ID
+            ),
+          );
         },
         child: Icon(Icons.add),
       ),
