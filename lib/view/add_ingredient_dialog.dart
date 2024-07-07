@@ -15,6 +15,9 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
   String amount = '';
   String expirationDate = '';
   List<Map<String, dynamic>> filteredIngredients = [];
+  bool isIngredientFieldFocused = false;
+  TextEditingController ingredientController = TextEditingController();
+  FocusNode ingredientFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -28,6 +31,13 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
     setState(() {
       filteredIngredients = ingredientViewModel.allIngredients;
     });
+  }
+
+  @override
+  void dispose() {
+    ingredientController.dispose();
+    ingredientFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -60,32 +70,45 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                   .toList(),
             ),
             TextField(
-              decoration: InputDecoration(labelText: '검색'),
+              controller: ingredientController,
+              focusNode: ingredientFocusNode,
+              decoration: InputDecoration(labelText: '재료'),
+              onTap: () {
+                setState(() {
+                  isIngredientFieldFocused = true;
+                });
+              },
               onChanged: (value) {
                 setState(() {
                   filteredIngredients = ingredientViewModel.allIngredients
                       .where((ingredient) =>
                   ingredient['food_category'] == selectedCategory &&
-                      ingredient['food_name'].contains(value))
+                      ingredient['food_name'].toLowerCase().contains(value.toLowerCase()))
                       .toList();
                 });
               },
             ),
-            DropdownButtonFormField<int>(
-              hint: Text('재료 선택'),
-              value: selectedFoodId,
-              onChanged: (value) {
-                setState(() {
-                  selectedFoodId = value;
-                });
-              },
-              items: filteredIngredients
-                  .map((ingredient) => DropdownMenuItem<int>(
-                value: ingredient['food_id'] as int,
-                child: Text(ingredient['food_name'] as String),
-              ))
-                  .toList(),
-            ),
+            if (isIngredientFieldFocused && filteredIngredients.isNotEmpty)
+              Container(
+                height: 150.0,
+                child: ListView.builder(
+                  itemCount: filteredIngredients.length,
+                  itemBuilder: (context, index) {
+                    final ingredient = filteredIngredients[index];
+                    return ListTile(
+                      title: Text(ingredient['food_name']),
+                      onTap: () {
+                        setState(() {
+                          selectedFoodId = ingredient['food_id'];
+                          ingredientController.text = ingredient['food_name'];
+                          isIngredientFieldFocused = false;
+                          ingredientFocusNode.unfocus(); // 포커스 제거
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
             TextField(
               decoration: InputDecoration(labelText: '양'),
               keyboardType: TextInputType.number,
