@@ -2,6 +2,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:fridge/config.dart';
 
+import 'ingredient.dart';
+
 class IngredientService {
   static Future<List<Ingredient>> fetchIngredients(String kakaoId) async {
     final response = await http.get(
@@ -59,35 +61,34 @@ class IngredientService {
     }
   }
 
-}
-
-
-// Ingredient 모델 클래스 추가
-class Ingredient {
-  final int foodId;
-  final String foodName;
-  final String foodCategory;
-  final int amount;
-  final String expirationDate;
-  final String unit;
-
-  Ingredient({
-    required this.foodId,
-    required this.foodName,
-    required this.foodCategory,
-    required this.amount,
-    required this.expirationDate,
-    required this.unit,
-  });
-
-  factory Ingredient.fromJson(Map<String, dynamic> json) {
-    return Ingredient(
-      foodId: json['food_id'] as int,
-      foodName: json['food_name'],
-      foodCategory: json['food_category'],
-      amount: json['amount'] as int,
-      expirationDate: json['expiration_date'],
-      unit: json['unit'],
+  static Future<void> updateIngredient(String userId, int foodId, int amount, String expirationDate) async {
+    final response = await http.put(
+      Uri.parse('${Config.apiUrl}/fridge/$userId/$foodId/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'amount': amount,
+        'expiration_date': expirationDate,
+      }),
     );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update ingredient');
+    }
   }
+
+  static Future<void> deleteIngredient(String userId, int foodId) async {
+    final response = await http.delete(
+      Uri.parse('${Config.apiUrl}/fridge/$userId/$foodId/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode != 204) {
+      throw Exception('Failed to delete ingredient');
+    }
+  }
+
 }

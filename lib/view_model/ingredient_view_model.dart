@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fridge/model/ingredient_service.dart';
+import 'package:fridge/model/ingredient.dart';
 
 class IngredientViewModel extends ChangeNotifier {
   List<Ingredient> _ingredients = [];
@@ -11,9 +12,10 @@ class IngredientViewModel extends ChangeNotifier {
   Future<void> fetchIngredients(String kakaoId) async {
     try {
       _ingredients = await IngredientService.fetchIngredients(kakaoId);
+      _ingredients.sort((a, b) => a.expirationDateAsDateTime.compareTo(b.expirationDateAsDateTime));
       notifyListeners();
     } catch (error) {
-      print('재료 정보 불러오기 실패 $error');
+      print('나의 재료 정보 불러오기 실패 $error');
     }
   }
 
@@ -23,6 +25,26 @@ class IngredientViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (error) {
       print('모든 재료 정보 불러오기 실패 $error');
+    }
+  }
+
+  Future<void> updateIngredient(String userId, int foodId, int amount, String expirationDate) async {
+    try {
+      await IngredientService.updateIngredient(userId, foodId, amount, expirationDate);
+      await fetchIngredients(userId); // 재료 수정 후 다시 불러오기
+      notifyListeners();
+    } catch (error) {
+      print('재료 수정 실패 $error');
+    }
+  }
+
+  Future<void> deleteIngredient(String userId, int foodId) async {
+    try {
+      await IngredientService.deleteIngredient(userId, foodId);
+      await fetchIngredients(userId); // 재료 삭제 후 다시 불러오기
+      notifyListeners();
+    } catch (error) {
+      print('재료 삭제 실패 $error');
     }
   }
 

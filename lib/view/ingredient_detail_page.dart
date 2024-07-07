@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fridge/model/ingredient_service.dart';
 
+import '../model/ingredient.dart';
+
 class IngredientDetailPage extends StatelessWidget {
   final Ingredient ingredient;
 

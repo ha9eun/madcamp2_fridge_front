@@ -13,7 +13,9 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
   String? selectedCategory;
   int? selectedFoodId;
   String amount = '';
-  String expirationDate = '';
+  int? selectedYear;
+  int? selectedMonth;
+  int? selectedDay;
   List<Map<String, dynamic>> filteredIngredients = [];
   bool isIngredientFieldFocused = false;
   TextEditingController ingredientController = TextEditingController();
@@ -38,6 +40,10 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
     ingredientController.dispose();
     ingredientFocusNode.dispose();
     super.dispose();
+  }
+
+  List<int> _getDaysInMonth(int year, int month) {
+    return List<int>.generate(DateUtils.getDaysInMonth(year, month), (i) => i + 1);
   }
 
   @override
@@ -121,13 +127,66 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                 });
               },
             ),
-            TextField(
-              decoration: InputDecoration(labelText: '유통기한 (yyyy-mm-dd)'),
-              onChanged: (value) {
-                setState(() {
-                  expirationDate = value;
-                });
-              },
+            Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<int>(
+                    hint: Text('년'),
+                    value: selectedYear,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedYear = value;
+                        if (selectedMonth != null) {
+                          selectedDay = null;
+                        }
+                      });
+                    },
+                    items: List.generate(11, (index) => DateTime.now().year + index)
+                        .map((year) => DropdownMenuItem<int>(
+                      value: year,
+                      child: Text(year.toString()),
+                    ))
+                        .toList(),
+                  ),
+                ),
+                Expanded(
+                  child: DropdownButtonFormField<int>(
+                    hint: Text('월'),
+                    value: selectedMonth,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedMonth = value;
+                        selectedDay = null;
+                      });
+                    },
+                    items: List.generate(12, (index) => index + 1)
+                        .map((month) => DropdownMenuItem<int>(
+                      value: month,
+                      child: Text(month.toString()),
+                    ))
+                        .toList(),
+                  ),
+                ),
+                Expanded(
+                  child: DropdownButtonFormField<int>(
+                    hint: Text('일'),
+                    value: selectedDay,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDay = value;
+                      });
+                    },
+                    items: selectedYear != null && selectedMonth != null
+                        ? _getDaysInMonth(selectedYear!, selectedMonth!)
+                        .map((day) => DropdownMenuItem<int>(
+                      value: day,
+                      child: Text(day.toString()),
+                    ))
+                        .toList()
+                        : [],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -141,7 +200,8 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
         ),
         ElevatedButton(
           onPressed: () async {
-            if (selectedFoodId != null && amount.isNotEmpty && expirationDate.isNotEmpty) {
+            if (selectedFoodId != null && amount.isNotEmpty && selectedYear != null && selectedMonth != null && selectedDay != null) {
+              final expirationDate = '${selectedYear!}-${selectedMonth!.toString().padLeft(2, '0')}-${selectedDay!.toString().padLeft(2, '0')}';
               await ingredientViewModel.addIngredient(
                 userViewModel.kakaoId,
                 selectedFoodId!,

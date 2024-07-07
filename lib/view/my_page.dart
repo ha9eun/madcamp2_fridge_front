@@ -4,6 +4,10 @@ import 'package:fridge/view_model/ingredient_view_model.dart';
 import 'package:fridge/view_model/user_view_model.dart';
 import 'package:fridge/view/add_ingredient_dialog.dart';
 
+import '../model/ingredient.dart';
+import '../model/ingredient_service.dart';
+import 'edit_ingredient_dialog.dart';
+
 class MyPage extends StatefulWidget {
   @override
   _MyPageState createState() => _MyPageState();
@@ -50,6 +54,47 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
+  void _editIngredient(BuildContext context, Ingredient ingredient) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EditIngredientDialog(ingredient: ingredient);
+      },
+    ).then((_) {
+      _loadIngredients(); // 다이얼로그가 닫힌 후 재료 목록을 다시 불러옴
+    });
+  }
+
+  void _deleteIngredient(BuildContext context, Ingredient ingredient) {
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    final ingredientViewModel = Provider.of<IngredientViewModel>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('삭제'),
+          content: Text('정말로 이 재료를 삭제하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+              },
+              child: Text('취소'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await ingredientViewModel.deleteIngredient(userViewModel.kakaoId, ingredient.foodId);
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+              },
+              child: Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context);
@@ -80,14 +125,10 @@ class _MyPageState extends State<MyPage> {
                 IconButton(
                   icon: Icon(Icons.add),
                   onPressed: () async {
-                    await ingredientViewModel.fetchAllIngredients();
                     showDialog(
                       context: context,
                       builder: (context) => AddIngredientDialog(),
-                    ).then((_) {
-                      // 다이얼로그가 닫힌 후 재료 목록을 다시 불러옴
-                      _loadIngredients();
-                    });
+                    );
                   },
                 ),
               ],
@@ -103,8 +144,35 @@ class _MyPageState extends State<MyPage> {
                     return ListTile(
                       title: Text(ingredient.foodName),
                       subtitle: Text('양: ${ingredient.amount} ${ingredient.unit}, 유통기한: ${ingredient.expirationDate}'),
-                      onTap: () {
-                        // 상세 정보 보기
+                      onLongPress: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return SafeArea(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: Icon(Icons.edit),
+                                    title: Text('수정'),
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      _editIngredient(context, ingredient);
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: Icon(Icons.delete),
+                                    title: Text('삭제'),
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      _deleteIngredient(context, ingredient);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
                       },
                     );
                   },
