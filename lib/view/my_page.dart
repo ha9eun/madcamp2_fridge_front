@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fridge/view/ingredient_detail_page.dart';
 import 'package:fridge/view_model/ingredient_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:fridge/view_model/user_view_model.dart';
@@ -90,6 +91,12 @@ class MyPage extends StatelessWidget {
                     title: Text(ingredient.foodName),
                     onTap: () {
                       // 재료 상세 정보 페이지로 이동 (필요시 구현)
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => IngredientDetailPage(ingredient: ingredient),
+                        ),
+                      );
                     },
                   );
                 },

@@ -13,7 +13,6 @@ class IngredientService {
 
     if (response.statusCode == 200) {
       List<dynamic> json = jsonDecode(utf8.decode(response.bodyBytes));
-      //List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
       return json.map((e) => Ingredient.fromJson(e)).toList();
     } else {
       throw Exception('Failed to load ingredients');
