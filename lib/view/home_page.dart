@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fridge/view/community_view.dart';
 import 'package:fridge/view/my_page.dart';
 import 'package:fridge/view/recipe_list_view.dart';
+import 'package:fridge/view_model/community_view_model.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   static List<Widget> _widgetOptions = <Widget>[
     MyPage(),
     RecipeListView(),
-    Text('커뮤니티', style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+    CommunityView(),
   ];
 
   void _onItemTapped(int index) {
