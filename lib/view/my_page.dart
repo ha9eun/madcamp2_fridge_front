@@ -1,109 +1,88 @@
 import 'package:flutter/material.dart';
-import 'package:fridge/view/ingredient_detail_page.dart';
-import 'package:fridge/view_model/ingredient_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:fridge/view_model/ingredient_view_model.dart';
 import 'package:fridge/view_model/user_view_model.dart';
+import 'package:fridge/view/add_ingredient_dialog.dart';
 
-class MyPage extends StatelessWidget {
+class MyPage extends StatefulWidget {
+  @override
+  _MyPageState createState() => _MyPageState();
+}
+
+class _MyPageState extends State<MyPage> {
+  @override
+  void initState() {
+    super.initState();
+    _loadIngredients();
+  }
+
+  void _loadIngredients() async {
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    final ingredientViewModel = Provider.of<IngredientViewModel>(context, listen: false);
+    await ingredientViewModel.fetchIngredients(userViewModel.kakaoId);
+  }
+
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context);
     final ingredientViewModel = Provider.of<IngredientViewModel>(context);
 
-    void _confirmLogout() {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('로그아웃'),
-            content: Text('로그아웃 하시겠습니까?'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // 다이얼로그 닫기
-                },
-                child: Text('취소'),
-              ),
-              TextButton(
-                onPressed: () {
-                  userViewModel.logout(context);
-                  Navigator.of(context).pop(); // 다이얼로그 닫기
-                },
-                child: Text('확인'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-
-    // 페이지 로드 시 재료 정보 불러오기
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (userViewModel.kakaoId.isNotEmpty) {
-        ingredientViewModel.fetchIngredients(userViewModel.kakaoId);
-      }
-    });
-
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(height: 20),
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                icon: Icon(Icons.settings, color: Colors.deepPurple),
-                onPressed: () {
-                  // 설정 페이지로 이동
-                },
-              ),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+      appBar: AppBar(
+        title: Text('${userViewModel.nickname} 님의 냉장고'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              // 설정 페이지로 이동
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${userViewModel.nickname} 님',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  '나의 냉장고 재료',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
-                  icon: Icon(Icons.logout, color: Colors.deepPurple),
-                  onPressed: _confirmLogout,
+                  icon: Icon(Icons.add),
+                  onPressed: () async {
+                    await ingredientViewModel.fetchAllIngredients();
+                    showDialog(
+                      context: context,
+                      builder: (context) => AddIngredientDialog(),
+                    ).then((_) {
+                      // 다이얼로그가 닫힌 후 재료 목록을 다시 불러옴
+                      _loadIngredients();
+                    });
+                  },
                 ),
               ],
             ),
-            SizedBox(height: 20),
-            Divider(),
-            // "나의 냉장고 재료" 리스트 표시
-            Text('나의 냉장고 재료', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: ingredientViewModel.ingredients.length,
-                itemBuilder: (context, index) {
-                  final ingredient = ingredientViewModel.ingredients[index];
-                  return ListTile(
-                    title: Text(ingredient.foodName),
-                    onTap: () {
-                      // 재료 상세 정보 페이지로 이동 (필요시 구현)
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => IngredientDetailPage(ingredient: ingredient),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: ingredientViewModel.ingredients.length,
+              itemBuilder: (context, index) {
+                final ingredient = ingredientViewModel.ingredients[index];
+                return ListTile(
+                  title: Text(ingredient.foodName),
+                  subtitle: Text('양: ${ingredient.amount} ${ingredient.unit}, 유통기한: ${ingredient.expirationDate}'),
+                  onTap: () {
+                    // 상세 정보 보기
+                  },
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
