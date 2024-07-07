@@ -5,6 +5,7 @@ class Ingredient {
   final int amount;
   final String expirationDate;
   final String unit;
+  final int fridgeId;
 
   Ingredient({
     required this.foodId,
@@ -13,6 +14,7 @@ class Ingredient {
     required this.amount,
     required this.expirationDate,
     required this.unit,
+    required this.fridgeId,
   });
 
   factory Ingredient.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class Ingredient {
       amount: json['amount'] as int,
       expirationDate: json['expiration_date'],
       unit: json['unit'],
+      fridgeId: json['fridge_id'],
     );
   }
 

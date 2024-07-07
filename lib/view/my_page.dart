@@ -60,9 +60,7 @@ class _MyPageState extends State<MyPage> {
       builder: (BuildContext context) {
         return EditIngredientDialog(ingredient: ingredient);
       },
-    ).then((_) {
-      _loadIngredients(); // 다이얼로그가 닫힌 후 재료 목록을 다시 불러옴
-    });
+    );
   }
 
   void _deleteIngredient(BuildContext context, Ingredient ingredient) {

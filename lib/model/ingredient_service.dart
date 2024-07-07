@@ -61,9 +61,9 @@ class IngredientService {
     }
   }
 
-  static Future<void> updateIngredient(String userId, int foodId, int amount, String expirationDate) async {
+  static Future<void> updateIngredient(String userId, int fridgeId, int amount, String expirationDate) async {
     final response = await http.put(
-      Uri.parse('${Config.apiUrl}/fridge/$userId/$foodId/'),
+      Uri.parse('${Config.apiUrl}/fridge/ingredients/$fridgeId/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

@@ -28,9 +28,9 @@ class IngredientViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateIngredient(String userId, int foodId, int amount, String expirationDate) async {
+  Future<void> updateIngredient(String userId, int fridgeId, int amount, String expirationDate) async {
     try {
-      await IngredientService.updateIngredient(userId, foodId, amount, expirationDate);
+      await IngredientService.updateIngredient(userId, fridgeId, amount, expirationDate);
       await fetchIngredients(userId); // 재료 수정 후 다시 불러오기
       notifyListeners();
     } catch (error) {

@@ -138,7 +138,7 @@ class _EditIngredientDialogState extends State<EditIngredientDialog> {
               final String expirationDate = '${selectedYear!}-${selectedMonth!.toString().padLeft(2, '0')}-${selectedDay!.toString().padLeft(2, '0')}';
               await ingredientViewModel.updateIngredient(
                 userViewModel.kakaoId,
-                widget.ingredient.foodId,
+                widget.ingredient.fridgeId,
                 amount,
                 expirationDate,
               );
