@@ -22,7 +22,7 @@ class CommunityViewModel extends ChangeNotifier {
     try {
       _boards = await CommunityService.getPosts();
     } catch (e) {
-      print(e);
+      print('Error fetching posts: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -35,11 +35,10 @@ class CommunityViewModel extends ChangeNotifier {
     try {
       _comments = await CommunityService.getComments(postId);
     } catch (e) {
-      print(e);
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      print('Error fetching comments: $e');
     }
+    _isLoading = false;
+    notifyListeners();
   }
 
   Future<void> addPost(Board post) async {
@@ -50,5 +49,15 @@ class CommunityViewModel extends ChangeNotifier {
   Future<void> deletePost(int postId) async {
     await CommunityService.deletePost(postId);
     fetchPosts();
+  }
+
+  Future<void> addComment(Comment comment) async {
+    await CommunityService.addComment(comment);
+    fetchComments(comment.boardId);
+  }
+
+  Future<void> deleteComment(int commentId) async {
+    await CommunityService.deleteComment(commentId);
+    fetchComments(1); // Replace 1 with actual boardId associated with the comment
   }
 }

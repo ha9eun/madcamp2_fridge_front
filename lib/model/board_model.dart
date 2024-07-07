@@ -1,18 +1,20 @@
 class Board {
   final int boardId;
   final String title;
-  final String writerId;
+  final String? writerId;
   final String content;
   final String createdAt;
   final String category;
+  final String? writerNickname;
 
   Board({
     required this.boardId,
     required this.title,
-    required this.writerId,
+    this.writerId,
     required this.content,
     required this.createdAt,
     required this.category,
+    this.writerNickname,
   });
 
   factory Board.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class Board {
       content: json['content'],
       createdAt: json['created_at'],
       category: json['category'],
+      writerNickname: json['writer_nickname'],
     );
   }
 }
