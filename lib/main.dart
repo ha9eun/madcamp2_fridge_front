@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fridge/config.dart';
+import 'package:fridge/view_model/community_view_model.dart';
 import 'package:fridge/view_model/ingredient_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
@@ -19,6 +20,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => UserViewModel()),
         ChangeNotifierProvider(create: (context) => RecipeViewModel()..fetchRecipes()),
         ChangeNotifierProvider(create: (context) => IngredientViewModel()),
+        ChangeNotifierProvider(create: (context) => CommunityViewModel()),
       ],
       child: MyApp(),
     ),
