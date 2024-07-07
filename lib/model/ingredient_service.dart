@@ -78,9 +78,9 @@ class IngredientService {
     }
   }
 
-  static Future<void> deleteIngredient(String userId, int foodId) async {
+  static Future<void> deleteIngredient(int fridgeId) async {
     final response = await http.delete(
-      Uri.parse('${Config.apiUrl}/fridge/$userId/$foodId/'),
+      Uri.parse('${Config.apiUrl}/fridge/ingredients/$fridgeId/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

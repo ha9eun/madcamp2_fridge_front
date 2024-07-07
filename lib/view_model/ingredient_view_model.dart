@@ -38,9 +38,9 @@ class IngredientViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteIngredient(String userId, int foodId) async {
+  Future<void> deleteIngredient(String userId, int fridgeId) async {
     try {
-      await IngredientService.deleteIngredient(userId, foodId);
+      await IngredientService.deleteIngredient(fridgeId);
       await fetchIngredients(userId); // 재료 삭제 후 다시 불러오기
       notifyListeners();
     } catch (error) {

@@ -82,7 +82,7 @@ class _MyPageState extends State<MyPage> {
             ),
             TextButton(
               onPressed: () async {
-                await ingredientViewModel.deleteIngredient(userViewModel.kakaoId, ingredient.foodId);
+                await ingredientViewModel.deleteIngredient(userViewModel.kakaoId, ingredient.fridgeId);
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
               child: Text('확인'),
