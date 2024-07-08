@@ -8,6 +8,25 @@ class RecipeListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Recipes'),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              String kakaoId = Provider.of<UserViewModel>(context, listen: false).kakaoId;
+              Provider.of<RecipeViewModel>(context, listen: false).toggleShowRecommended(kakaoId);
+            },
+            itemBuilder: (BuildContext context) {
+              return {'Show All', 'Show Recommended'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Consumer<RecipeViewModel>(
@@ -16,13 +35,7 @@ class RecipeListView extends StatelessWidget {
               return Center(child: CircularProgressIndicator());
             }
 
-            return GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 3 / 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
+            return ListView.builder(
               itemCount: viewModel.recipes.length,
               itemBuilder: (context, index) {
                 final recipe = viewModel.recipes[index];
@@ -39,40 +52,23 @@ class RecipeListView extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15),
-                              ),
-                            ),
-                          ),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.all(10),
+                      title: Text(
+                        recipe.name,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            recipe.name,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                      ),
+                      subtitle: Text(
+                        recipe.description,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text(
-                            recipe.description,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                 );
