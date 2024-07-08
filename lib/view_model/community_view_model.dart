@@ -56,8 +56,13 @@ class CommunityViewModel extends ChangeNotifier {
     fetchComments(comment.boardId);
   }
 
-  Future<void> deleteComment(int commentId) async {
+  Future<void> deleteComment(int commentId, int boardId) async {
     await CommunityService.deleteComment(commentId);
-    fetchComments(1); // Replace 1 with actual boardId associated with the comment
+    fetchComments(boardId);
+  }
+
+  Future<void> editPost(Board post) async {
+    await CommunityService.editPost(post);
+    fetchPosts();
   }
 }

@@ -2,20 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_model/community_view_model.dart';
 import '../model/board_model.dart';
-import '../view_model/user_view_model.dart';
 
-class AddPostPage extends StatelessWidget {
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController contentController = TextEditingController();
-  final String writerId;
+class EditPostPage extends StatefulWidget {
+  final Board post;
 
-  AddPostPage({required this.writerId});
+  EditPostPage({required this.post});
+
+  @override
+  _EditPostPageState createState() => _EditPostPageState();
+}
+
+class _EditPostPageState extends State<EditPostPage> {
+  late TextEditingController titleController;
+  late TextEditingController contentController;
+
+  @override
+  void initState() {
+    super.initState();
+    titleController = TextEditingController(text: widget.post.title);
+    contentController = TextEditingController(text: widget.post.content);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final userViewModel = Provider.of<UserViewModel>(context);
     return Scaffold(
-      appBar: AppBar(title: Text('Add Post')),
+      appBar: AppBar(title: Text('Edit Post')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -34,22 +45,23 @@ class AddPostPage extends StatelessWidget {
               onPressed: () {
                 final title = titleController.text;
                 final content = contentController.text;
-                final post = Board(
-                  boardId: 0,
+                final updatedPost = Board(
+                  boardId: widget.post.boardId,
                   title: title,
-                  writerId: userViewModel.kakaoId,
+                  writerId: widget.post.writerId,
                   content: content,
-                  createdAt: DateTime.now().toString(),
-                  category: '자유',
+                  createdAt: widget.post.createdAt,
+                  category: widget.post.category,
+                  writerNickname: widget.post.writerNickname,
                 );
 
                 Provider.of<CommunityViewModel>(context, listen: false)
-                    .addPost(post)
+                    .editPost(updatedPost)
                     .then((_) {
                   Navigator.pop(context);
                 });
               },
-              child: Text('Add Post'),
+              child: Text('Update Post'),
             ),
           ],
         ),
