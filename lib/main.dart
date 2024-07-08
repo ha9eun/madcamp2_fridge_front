@@ -18,7 +18,8 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => UserViewModel()),
-        ChangeNotifierProvider(create: (context) => RecipeViewModel()..fetchRecipes()),
+        ChangeNotifierProvider(
+            create: (context) => RecipeViewModel()..fetchRecipes()),
         ChangeNotifierProvider(create: (context) => IngredientViewModel()),
         ChangeNotifierProvider(create: (context) => CommunityViewModel()),
       ],
@@ -33,7 +34,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '냉장고를 부탁해',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        primaryColor: Color(0xFF00ADB5),
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          secondary: Color(0xFF393E46),
+        ),
+        scaffoldBackgroundColor: Color(0xFFEEEEEE),
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(color: Color(0xFF222831)),
+          bodyMedium: TextStyle(color: Color(0xFF222831)),
+        ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          selectedItemColor: Color(0xFF00ADB5),
+          unselectedItemColor: Color(0xFF393E46),
+          backgroundColor: Color(0xFFEEEEEE),
+        ),
         useMaterial3: true,
       ),
       initialRoute: '/',
