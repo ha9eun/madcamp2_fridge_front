@@ -5,6 +5,20 @@ import 'package:fridge/view/recipe_list_view.dart';
 import 'package:fridge/view_model/community_view_model.dart';
 import 'package:provider/provider.dart';
 
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Fridge App',
+      home: HomePage(),
+    );
+  }
+}
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -12,6 +26,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  PageController _pageController = PageController();
 
   static List<Widget> _widgetOptions = <Widget>[
     MyPage(),
@@ -23,32 +38,39 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
+    _pageController.jumpToPage(index);
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: _onPageChanged,
+        children: _widgetOptions,
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '마이페이지',
+            icon: Icon(Icons.kitchen),
+            label: '나의 냉장고',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '탭 1',
+            icon: Icon(Icons.restaurant_menu),
+            label: '레시피',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: '탭 2',
+            icon: Icon(Icons.forum),
+            label: '커뮤니티',
           ),
-          
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
       ),
     );

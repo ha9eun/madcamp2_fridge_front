@@ -7,23 +7,29 @@ import 'recipe_service.dart';
 import 'ingredient_service.dart';
 
 class RecommendService {
-  static Future<List<Recipe>> getRecommendation(String kakaoId, String userPrompt) async {
-    List<Ingredient> ingredients = await IngredientService.fetchIngredients(kakaoId);
+  static Future<List<Recipe>> getRecommendation(
+      String kakaoId, String userPrompt) async {
+    List<Ingredient> ingredients =
+        await IngredientService.fetchIngredients(kakaoId);
     List<Recipe> recipes = await RecipeService.fetchRecipes();
     const apiKey = Config.geminiKey;
 
-    List<Map<String, dynamic>> ingredientList = ingredients.map((e) => {
-      'food_id': e.foodId,
-      'food_name': e.foodName,
-      'amount': e.amount,
-      'unit': e.unit,
-    }).toList();
+    List<Map<String, dynamic>> ingredientList = ingredients
+        .map((e) => {
+              'food_id': e.foodId,
+              'food_name': e.foodName,
+              'amount': e.amount,
+              'unit': e.unit,
+            })
+        .toList();
 
-    List<Map<String, dynamic>> recipeList = recipes.map((e) => {
-      'recipe_id': e.id,
-      'recipe_name': e.name,
-      'ingredients_list': e.description,
-    }).toList();
+    List<Map<String, dynamic>> recipeList = recipes
+        .map((e) => {
+              'recipe_id': e.id,
+              'recipe_name': e.name,
+              'ingredients_list': e.description,
+            })
+        .toList();
 
     if (apiKey == null) {
       print('No \$API_KEY environment variable');
@@ -70,8 +76,25 @@ class RecommendService {
     }
 
     // Filter the recipes based on the recommended recipe IDs
-    List<Recipe> recommendedRecipes = recipes.where((recipe) => recommendedRecipeIds.contains(recipe.id)).toList();
+    List<Recipe> recommendedRecipes = recipes
+        .where((recipe) => recommendedRecipeIds.contains(recipe.id))
+        .toList();
 
     return recommendedRecipes;
+  }
+
+  static Future<String> getComment(String recipeName) async {
+    const apiKey = Config.geminiKey;
+
+    final prompt = """
+      Given a recipe name, generate a comment about the recipe, in Korean
+      Recipe name: $recipeName.""";
+
+    // The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
+    final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
+    final content = [Content.text(prompt)];
+    final response = await model.generateContent(content);
+
+    return response.text ?? '';
   }
 }
