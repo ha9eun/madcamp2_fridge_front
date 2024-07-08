@@ -143,6 +143,7 @@ class _RecipeListViewState extends State<RecipeListView> {
                     }).toList();
 
                     return ListView.builder(
+                      padding: EdgeInsets.only(bottom: 80),
                       itemCount: filteredRecipes.length,
                       itemBuilder: (context, index) {
                         final recipe = filteredRecipes[index];
@@ -169,7 +170,7 @@ class _RecipeListViewState extends State<RecipeListView> {
                                 ),
                               ),
                               subtitle: Text(
-                                recipe.description,
+                                recipe.ingredients.join(', '),
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[600],

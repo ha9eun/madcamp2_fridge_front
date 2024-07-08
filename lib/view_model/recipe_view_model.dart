@@ -10,6 +10,7 @@ class RecipeViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool _showRecommended = false;
   String _aiComment = '';
+  List<RecipeIngredient> _recipeDetails = [];
 
   List<Recipe> get recipes => _showRecommended ? _recommendedRecipes : _allRecipes;
   RecipeDetail? get selectedRecipe => _selectedRecipe;
@@ -42,6 +43,9 @@ class RecipeViewModel extends ChangeNotifier {
     notifyListeners();
 
     _selectedRecipe = await RecipeService.fetchRecipeDetail(recipeId);
+    if (_selectedRecipe != null) {
+      _recipeDetails = _selectedRecipe!.details;
+    }
     
     _isLoading = false;
     notifyListeners();
@@ -60,5 +64,12 @@ class RecipeViewModel extends ChangeNotifier {
   void setAiComment(String comment) {
     _aiComment = comment;
     notifyListeners();
+  }
+
+  List<String> getIngredientNames() {
+    if (_selectedRecipe != null) {
+      return _selectedRecipe!.details.map((detail) => detail.foodName).toList();
+    }
+    return [];
   }
 }

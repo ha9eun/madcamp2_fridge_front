@@ -2,15 +2,24 @@ class Recipe {
   final int id;
   final String name;
   final String description;
+  final List<String> ingredients;
 
-  Recipe({required this.id, required this.name, required this.description});
+  Recipe({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.ingredients,
+  });
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
+    var details = json['details'] as List;
+    List<String> ingredientsList = details.map((item) => item['food_name'] as String).toList();
+
     return Recipe(
       id: json['recipe_id'],
       name: json['recipe_name'],
       description: json['recipe_content'],
-      // ingredients: List<String>.from(json['ingredients']),
+      ingredients: ingredientsList,
     );
   }
 }
