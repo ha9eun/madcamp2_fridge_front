@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fridge/view/meal_direct_input_page.dart';
 import 'package:provider/provider.dart';
 import 'package:fridge/view_model/ingredient_view_model.dart';
 import 'package:fridge/view_model/user_view_model.dart';
@@ -7,7 +8,6 @@ import 'package:fridge/view/add_ingredient_dialog.dart';
 import '../model/ingredient.dart';
 import '../model/ingredient_service.dart';
 import 'edit_ingredient_dialog.dart';
-import 'meal_page.dart';
 
 class MyPage extends StatefulWidget {
   @override
@@ -138,7 +138,7 @@ class _MyPageState extends State<MyPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MealPage()),
+                  MaterialPageRoute(builder: (context) => MealDirectInputPage(recipeId: 0)),
                 );
               },
               child: Text('식사하기'),
