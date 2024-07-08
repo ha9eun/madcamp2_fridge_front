@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_model/community_view_model.dart';
-import '../model/board_model.dart';
 import 'add_post_page.dart';
 import 'post_detail_page.dart';
-import 'edit_post_page.dart';
+import '../model/board_model.dart';
 
 class CommunityView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Community')),
+      appBar: AppBar(
+        title: Text(
+          'Community',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
       body: Consumer<CommunityViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.isLoading) {
@@ -19,12 +27,11 @@ class CommunityView extends StatelessWidget {
             return Center(child: Text('No posts found'));
           } else {
             return ListView.builder(
+              padding: EdgeInsets.only(bottom: 80), // 추가 패딩
               itemCount: viewModel.boards.length,
               itemBuilder: (context, index) {
                 Board board = viewModel.boards[index];
-                return ListTile(
-                  title: Text(board.title),
-                  subtitle: Text(board.writerNickname ?? 'Anonymous'),
+                return GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
@@ -33,16 +40,22 @@ class CommunityView extends StatelessWidget {
                       ),
                     );
                   },
-                  trailing: IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditPostPage(post: board),
+                  child: Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.all(10),
+                      title: Text(
+                        board.title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                      );
-                    },
+                      ),
+                      subtitle: Text(board.writerNickname ?? 'Anonymous'),
+                    ),
                   ),
                 );
               },
@@ -50,17 +63,19 @@ class CommunityView extends StatelessWidget {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddPostPage(writerId: 'currentUserId'), // Replace with actual current user ID
+              builder: (context) => AddPostPage(writerId: 'currentUserId'), // 실제 사용자 ID로 교체
             ),
           );
         },
-        child: Icon(Icons.add),
+        label: Text('Add Post'),
+        backgroundColor: Theme.of(context).primaryColor,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
