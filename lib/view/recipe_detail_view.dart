@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../view_model/recipe_view_model.dart';
 import '../model/recommend_service.dart';
+import '../model/youtube_service.dart'; // YouTubeService를 임포트
 import 'meal_direct_input_page.dart'; // MealDirectInputPage를 임포트
+import '../model/recipe_model.dart';
 
 class RecipeDetailView extends StatefulWidget {
   final int recipeId;
@@ -15,6 +18,8 @@ class RecipeDetailView extends StatefulWidget {
 
 class _RecipeDetailViewState extends State<RecipeDetailView> {
   Future<void>? _loadDataFuture;
+  String? _videoId;
+  YoutubePlayerController? _youtubeController;
 
   @override
   void initState() {
@@ -28,7 +33,27 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
     if (recipeViewModel.selectedRecipe != null) {
       final comment = await RecommendService.getComment(recipeViewModel.selectedRecipe!.recipeName);
       recipeViewModel.setAiComment(comment);
+
+      final videoId = await YouTubeService.fetchVideoId('${recipeViewModel.selectedRecipe!.recipeName} 레시피');
+      if (videoId != null) {
+        setState(() {
+          _videoId = videoId;
+          _youtubeController = YoutubePlayerController(
+            initialVideoId: _videoId!,
+            flags: YoutubePlayerFlags(
+              autoPlay: false,
+              mute: false,
+            ),
+          );
+        });
+      }
     }
+  }
+
+  @override
+  void dispose() {
+    _youtubeController?.dispose();
+    super.dispose();
   }
 
   @override
@@ -38,7 +63,7 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '레시피 상세',
+          recipeViewModel.selectedRecipe?.recipeName ?? '레시피 상세',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -66,14 +91,23 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    recipe.recipeName,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
+                  _videoId != null
+                      ? YoutubePlayer(
+                          controller: _youtubeController!,
+                          showVideoProgressIndicator: true,
+                          onReady: () {
+                            _youtubeController!.addListener(() {
+                              if (_youtubeController!.value.isFullScreen) {
+                                // 전체화면 상태가 변경될 때 필요한 작업을 수행합니다.
+                              }
+                            });
+                          },
+                        )
+                      : Container(
+                          height: 200,
+                          color: Colors.black12,
+                          child: Center(child: Text('YouTube Video Placeholder')),
+                        ),
                   SizedBox(height: 10),
                   Text(
                     '재료',
@@ -84,14 +118,7 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  for (var ingredient in recipe.details)
-                    Text(
-                      '${ingredient.foodName} ${ingredient.amount}${ingredient.unit}',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
-                    ),
+                  _buildIngredients(recipe),
                   SizedBox(height: 20),
                   Text(
                     '조리 방법',
@@ -102,20 +129,10 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  for (var step in recipe.recipeContent.split('\n'))
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Text(
-                        step,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ),
+                  _buildRecipeSteps(recipe),
                   SizedBox(height: 20),
                   Text(
-                    'AI의 한마디',
+                    'gemini의 한마디',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -130,24 +147,81 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
                       color: Colors.grey[800],
                     ),
                   ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MealDirectInputPage(recipeId: recipe.recipeId),
-                        ),
-                      );
-                    },
-                    child: Text('식사하기'),
-                  ),
+                  SizedBox(height: 80), // 추가 패딩
                 ],
               ),
             );
           }
         },
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MealDirectInputPage(recipeId: recipeViewModel.selectedRecipe!.recipeId),
+            ),
+          );
+        },
+        label: Text('식사하기'),
+        icon: Icon(Icons.fastfood),
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget _buildIngredients(RecipeDetail recipe) {
+    return Table(
+      border: TableBorder.all(color: Colors.grey),
+      children: [
+        TableRow(children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              '재료명',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              '양',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ]),
+        for (var ingredient in recipe.details)
+          TableRow(children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(ingredient.foodName),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('${ingredient.amount}${ingredient.unit}'),
+            ),
+          ]),
+      ],
+    );
+  }
+
+  Widget _buildRecipeSteps(RecipeDetail recipe) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var step in recipe.recipeContent.split('\n'))
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: Text(
+              step,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

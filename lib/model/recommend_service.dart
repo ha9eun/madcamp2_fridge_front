@@ -84,6 +84,8 @@ class RecommendService {
     final prompt = """
       Given a recipe name, generate a comment about the recipe, in Korean.
       It would be better if the detailed reason for the recommendation is also given.
+      Consider the season being summer, rainy season.
+      Make sure that the response does not exceed two paragraphs.
       Recipe name: $recipeName.""";
 
     // The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
