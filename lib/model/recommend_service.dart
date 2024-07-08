@@ -31,11 +31,6 @@ class RecommendService {
             })
         .toList();
 
-    if (apiKey == null) {
-      print('No \$API_KEY environment variable');
-      return [];
-    }
-
     final prompt = """
       Given a list of ingredients and a list of recipes, recommend a recipe based on the ingredients and the following prompt: $userPrompt.
       Returned text should be a list of recipe id.
@@ -87,7 +82,8 @@ class RecommendService {
     const apiKey = Config.geminiKey;
 
     final prompt = """
-      Given a recipe name, generate a comment about the recipe, in Korean
+      Given a recipe name, generate a comment about the recipe, in Korean.
+      It would be better if the detailed reason for the recommendation is also given.
       Recipe name: $recipeName.""";
 
     // The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
