@@ -5,6 +5,7 @@ class Comment {
   final String writerId;
   final String content;
   final String createdAt;
+  final String? writerNickname;
 
   Comment({
     required this.commentId,
@@ -13,6 +14,7 @@ class Comment {
     required this.writerId,
     required this.content,
     required this.createdAt,
+    this.writerNickname,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,18 @@ class Comment {
       writerId: json['writer_id'],
       content: json['content'],
       createdAt: json['created_at'],
+      writerNickname: json['writer_nickname'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'comment_id': commentId,
+      'board_id': boardId,
+      'parent_id': parentId,
+      'writer_id': writerId,
+      'content': content,
+      'created_at': createdAt,
+    };
   }
 }

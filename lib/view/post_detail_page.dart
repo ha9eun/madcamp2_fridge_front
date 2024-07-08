@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fridge/view_model/user_view_model.dart';
 import 'package:provider/provider.dart';
 import '../view_model/community_view_model.dart';
 import '../model/comment_model.dart';
@@ -26,6 +27,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final UserViewModel userViewModel = Provider.of<UserViewModel>(context);
     return Scaffold(
       appBar: AppBar(title: Text('Post Details')),
       body: Consumer<CommunityViewModel>(
@@ -53,12 +55,15 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       final comment = comments[index];
                       return ListTile(
                         title: Text(comment.content),
-                        subtitle: Text(comment.writerId),
+                        subtitle: Text(comment.writerNickname ?? 'Anonymous'),
                         trailing: IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () {
                             Provider.of<CommunityViewModel>(context, listen: false)
-                                .deleteComment(comment.commentId);
+                                .deleteComment(comment.commentId, widget.postId)
+                                .then((_) {
+                              commentController.clear();
+                            });
                           },
                         ),
                       );
@@ -77,7 +82,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       commentId: 0,
                       boardId: widget.postId,
                       parentId: null,
-                      writerId: 'currentUserId', // Replace with actual current user ID
+                      writerId: userViewModel.kakaoId,
                       content: content,
                       createdAt: DateTime.now().toString(),
                     );

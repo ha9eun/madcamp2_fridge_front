@@ -28,4 +28,16 @@ class Board {
       writerNickname: json['writer_nickname'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'board_id': boardId,
+      'title': title,
+      'writer_id': writerId,
+      'content': content,
+      'created_at': createdAt,
+      'category': category,
+      'writer_nickname': writerNickname,
+    };
+  }
 }

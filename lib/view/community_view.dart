@@ -4,6 +4,7 @@ import '../view_model/community_view_model.dart';
 import '../model/board_model.dart';
 import 'add_post_page.dart';
 import 'post_detail_page.dart';
+import 'edit_post_page.dart';
 
 class CommunityView extends StatelessWidget {
   @override
@@ -32,6 +33,17 @@ class CommunityView extends StatelessWidget {
                       ),
                     );
                   },
+                  trailing: IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditPostPage(post: board),
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             );
