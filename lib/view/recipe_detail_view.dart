@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fridge/view/meal_direct_input_page.dart';
 import 'package:provider/provider.dart';
-import '../model/recipe_model.dart';
 import '../view_model/recipe_view_model.dart';
 
 class RecipeDetailView extends StatelessWidget {
@@ -38,6 +38,18 @@ class RecipeDetailView extends StatelessWidget {
                 Text('Ingredients:', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
                 for (var ingredient in recipe.details)
                   Text('${ingredient.foodName} - ${ingredient.amount} ${ingredient.unit}', style: TextStyle(fontSize: 16.0)),
+                SizedBox(height: 20.0),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MealDirectInputPage(recipeId: recipeId),
+                      ),
+                    );
+                  },
+                  child: Text('식사하기'),
+                ),
               ],
             ),
           );
