@@ -9,10 +9,12 @@ class RecipeViewModel extends ChangeNotifier {
   RecipeDetail? _selectedRecipe;
   bool _isLoading = false;
   bool _showRecommended = false;
+  String _aiComment = '';
 
   List<Recipe> get recipes => _showRecommended ? _recommendedRecipes : _allRecipes;
   RecipeDetail? get selectedRecipe => _selectedRecipe;
   bool get isLoading => _isLoading;
+  String get aiComment => _aiComment;
 
   Future<void> fetchRecipes() async {
     _isLoading = true;
@@ -52,6 +54,11 @@ class RecipeViewModel extends ChangeNotifier {
 
   void selectRecipe(RecipeDetail recipe) {
     _selectedRecipe = recipe;
+    notifyListeners();
+  }
+
+  void setAiComment(String comment) {
+    _aiComment = comment;
     notifyListeners();
   }
 }
