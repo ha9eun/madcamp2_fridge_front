@@ -7,7 +7,7 @@ import 'recipe_service.dart';
 import 'ingredient_service.dart';
 
 class RecommendService {
-  static Future<List<Recipe>> getRecommendation(String kakaoId) async {
+  static Future<List<Recipe>> getRecommendation(String kakaoId, String userPrompt) async {
     List<Ingredient> ingredients = await IngredientService.fetchIngredients(kakaoId);
     List<Recipe> recipes = await RecipeService.fetchRecipes();
     const apiKey = Config.geminiKey;
@@ -17,7 +17,7 @@ class RecommendService {
       'food_name': e.foodName,
       'amount': e.amount,
       'unit': e.unit,
-    }).toList(); 
+    }).toList();
 
     List<Map<String, dynamic>> recipeList = recipes.map((e) => {
       'recipe_id': e.id,
@@ -31,7 +31,7 @@ class RecommendService {
     }
 
     final prompt = """
-      Given a list of ingredients and a list of recipes, recommend a recipe based on the ingredients.
+      Given a list of ingredients and a list of recipes, recommend a recipe based on the ingredients and the following prompt: $userPrompt.
       Returned text should be a list of recipe id.
       Ingredients: $ingredientList
       Recipes: $recipeList""";
@@ -41,17 +41,33 @@ class RecommendService {
     final content = [Content.text(prompt)];
     final response = await model.generateContent(content);
 
-    // Check if response.text is null
-    if (response.text == null) {
+    final responseText = response.text;
+    if (responseText == null) {
       print('Response text is null');
       return [];
     }
 
-    // Extract JSON from response.text
-    final jsonStr = response.text!.replaceAll(RegExp(r'[^0-9,\[\]]'), '');
+    // Extract JSON array from response.text
+    final jsonMatch = RegExp(r'\[.*?\]').firstMatch(responseText);
+    if (jsonMatch == null) {
+      print('No JSON array found in response text');
+      return [];
+    }
+
+    final jsonStr = jsonMatch.group(0);
+    if (jsonStr == null) {
+      print('JSON string is null');
+      return [];
+    }
 
     // Parse the JSON string to extract recipe IDs
-    List<int> recommendedRecipeIds = List<int>.from(jsonDecode(jsonStr));
+    List<int> recommendedRecipeIds;
+    try {
+      recommendedRecipeIds = List<int>.from(jsonDecode(jsonStr));
+    } catch (e) {
+      print('Error parsing JSON: $e');
+      return [];
+    }
 
     // Filter the recipes based on the recommended recipe IDs
     List<Recipe> recommendedRecipes = recipes.where((recipe) => recommendedRecipeIds.contains(recipe.id)).toList();
