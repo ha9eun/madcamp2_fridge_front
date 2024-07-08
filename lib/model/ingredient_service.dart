@@ -61,7 +61,7 @@ class IngredientService {
     }
   }
 
-  static Future<void> updateIngredient(String userId, int fridgeId, int amount, String expirationDate) async {
+  static Future<void> updateIngredient(int fridgeId, int amount, String expirationDate) async {
     final response = await http.put(
       Uri.parse('${Config.apiUrl}/fridge/ingredients/$fridgeId/'),
       headers: <String, String>{
@@ -88,6 +88,28 @@ class IngredientService {
 
     if (response.statusCode != 204) {
       throw Exception('Failed to delete ingredient');
+    }
+  }
+
+  static Future<void> recordMeal(Map<int, int> usedIngredients, List<Ingredient> ingredients) async {
+    for (var entry in usedIngredients.entries) {
+      int fridgeId = entry.key;
+      int usedAmount = entry.value;
+
+      // Find the ingredient in the current list
+      Ingredient? ingredient = ingredients.firstWhere((ing) => ing.fridgeId == fridgeId);
+
+
+      int newAmount = ingredient.amount - usedAmount;
+
+      if (newAmount > 0) {
+        // Update the ingredient with the new amount
+        await updateIngredient(fridgeId, newAmount, ingredient.expirationDate);
+      } else {
+        // Delete the ingredient if the amount is zero or less
+        await deleteIngredient(fridgeId);
+      }
+
     }
   }
 

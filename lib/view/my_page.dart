@@ -7,6 +7,7 @@ import 'package:fridge/view/add_ingredient_dialog.dart';
 import '../model/ingredient.dart';
 import '../model/ingredient_service.dart';
 import 'edit_ingredient_dialog.dart';
+import 'meal_page.dart';
 
 class MyPage extends StatefulWidget {
   @override
@@ -96,7 +97,6 @@ class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context);
-    final ingredientViewModel = Provider.of<IngredientViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -130,6 +130,18 @@ class _MyPageState extends State<MyPage> {
                   },
                 ),
               ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MealPage()),
+                );
+              },
+              child: Text('식사하기'),
             ),
           ),
           Expanded(

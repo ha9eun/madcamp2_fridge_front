@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fridge/model/ingredient_service.dart';
 import 'package:fridge/model/ingredient.dart';
+import 'package:fridge/view_model/user_view_model.dart';
+import 'package:provider/provider.dart';
 
 class IngredientViewModel extends ChangeNotifier {
   List<Ingredient> _ingredients = [];
@@ -30,7 +32,7 @@ class IngredientViewModel extends ChangeNotifier {
 
   Future<void> updateIngredient(String userId, int fridgeId, int amount, String expirationDate) async {
     try {
-      await IngredientService.updateIngredient(userId, fridgeId, amount, expirationDate);
+      await IngredientService.updateIngredient(fridgeId, amount, expirationDate);
       await fetchIngredients(userId); // 재료 수정 후 다시 불러오기
       notifyListeners();
     } catch (error) {
@@ -56,6 +58,17 @@ class IngredientViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (error) {
       print('재료 추가 실패 $error');
+    }
+  }
+
+  Future<void> recordMeal(BuildContext context, Map<int, int> usedIngredients) async {
+    try {
+      final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+      await IngredientService.recordMeal(usedIngredients, _ingredients);
+      await fetchIngredients(userViewModel.kakaoId); // 식사 후 재료 목록 다시 불러오기
+      notifyListeners();
+    } catch (error) {
+      print('식사 기록 실패 $error');
     }
   }
 
