@@ -23,8 +23,7 @@ class _MyPageState extends State<MyPage> {
 
   void _loadIngredients() async {
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    final ingredientViewModel = Provider.of<IngredientViewModel>(
-        context, listen: false);
+    final ingredientViewModel = Provider.of<IngredientViewModel>(context, listen: false);
     await ingredientViewModel.fetchIngredients(userViewModel.kakaoId);
   }
 
@@ -44,8 +43,7 @@ class _MyPageState extends State<MyPage> {
             ),
             TextButton(
               onPressed: () {
-                final userViewModel = Provider.of<UserViewModel>(
-                    context, listen: false);
+                final userViewModel = Provider.of<UserViewModel>(context, listen: false);
                 userViewModel.logout(context);
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
@@ -68,8 +66,7 @@ class _MyPageState extends State<MyPage> {
 
   void _deleteIngredient(BuildContext context, Ingredient ingredient) {
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    final ingredientViewModel = Provider.of<IngredientViewModel>(
-        context, listen: false);
+    final ingredientViewModel = Provider.of<IngredientViewModel>(context, listen: false);
 
     showDialog(
       context: context,
@@ -86,8 +83,7 @@ class _MyPageState extends State<MyPage> {
             ),
             TextButton(
               onPressed: () async {
-                await ingredientViewModel.deleteIngredient(
-                    userViewModel.kakaoId, ingredient.fridgeId);
+                await ingredientViewModel.deleteIngredient(userViewModel.kakaoId, ingredient.fridgeId);
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
               child: Text('확인'),
@@ -101,9 +97,7 @@ class _MyPageState extends State<MyPage> {
   Color _getFreshnessColor(String expirationDate) {
     final now = DateTime.now();
     final expiration = DateTime.parse(expirationDate);
-    final difference = expiration
-        .difference(now)
-        .inDays;
+    final difference = expiration.difference(now).inDays;
 
     if (difference < 0) {
       return Color(0xFF222831); // 검은색
@@ -149,20 +143,9 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
-    final userViewModel = Provider.of<UserViewModel>(context);
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text('${userViewModel.nickname} 님의 냉장고'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: _confirmLogout,
-          ),
-        ],
-      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(top: 50.0, left: 16.0, right: 16.0, bottom: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -184,6 +167,7 @@ class _MyPageState extends State<MyPage> {
                 ),
               ],
             ),
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -249,6 +233,17 @@ class _MyPageState extends State<MyPage> {
               },
             ),
             SizedBox(height: 80), // 추가 패딩
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: _confirmLogout,
+                icon: Icon(Icons.logout),
+                label: Text('로그아웃'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+              ),
+            ),
           ],
         ),
       ),
