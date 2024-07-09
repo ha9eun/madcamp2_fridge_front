@@ -19,6 +19,7 @@ class MealDirectInputPage extends StatefulWidget {
 class _MealDirectInputPageState extends State<MealDirectInputPage> {
   Map<int, int> selectedAmounts = {};
   Map<int, String> errorMessages = {};
+  Map<int, TextEditingController> controllers = {};
   Recipe? selectedRecipe;
   final _formKey = GlobalKey<FormState>();
 
@@ -55,11 +56,16 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
             foodCategory: '',
           ),
         );
-        if (fridgeIngredient.amount > 0) { // 일치하는 재료이면
+        if (fridgeIngredient.fridgeId != 0) { // 일치하는 재료이면
           //레시피 양보다 냉장고 양이 적을 때 처리해서 기본값으로 저장
           selectedAmounts[fridgeIngredient.fridgeId] = fridgeIngredient.amount < ingredient.amount
               ? fridgeIngredient.amount
               : ingredient.amount;
+
+          // TextEditingController 생성 및 기본값 설정
+          controllers[fridgeIngredient.fridgeId] = TextEditingController(
+            text: selectedAmounts[fridgeIngredient.fridgeId].toString(),
+          );
         }
       } //for
     }
@@ -83,7 +89,6 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
     return errorMessages.values.any((message) => message.isNotEmpty);
   }
 
-
   @override
   Widget build(BuildContext context) {
     final ingredientViewModel = Provider.of<IngredientViewModel>(context);
@@ -96,8 +101,8 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column( //자식을 수직으로 표시
-            crossAxisAlignment: CrossAxisAlignment.start, //왼쪽 정렬
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 '냉장고 재료 목록',
@@ -144,11 +149,15 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
                         onChanged: (bool? value) {
                           setState(() {
                             if (value == true) { //check
-                              selectedAmounts[ingredient.fridgeId] = 0;
+                              selectedAmounts[ingredient.fridgeId] = 1;
                               errorMessages[ingredient.fridgeId] = '';
+                              controllers[ingredient.fridgeId] = TextEditingController(
+                                text: '1',
+                              );
                             } else {
                               selectedAmounts.remove(ingredient.fridgeId);
                               errorMessages.remove(ingredient.fridgeId);
+                              controllers.remove(ingredient.fridgeId);
                             }
                           });
                         },
@@ -172,6 +181,7 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
                           ? SizedBox(
                         width: 100,
                         child: TextField(
+                          controller: controllers[ingredient.fridgeId],
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             hintText: '양',
@@ -187,7 +197,7 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
                   },
                 ),
               ),
-               ElevatedButton(
+              ElevatedButton(
                 onPressed: () async {
                   if (!_hasValidationErrors()) {
                     try {
