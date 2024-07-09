@@ -19,6 +19,12 @@ class _RecipeListViewState extends State<RecipeListView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadRecipes();
     });
+
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text;
+      });
+    });
   }
 
   Future<void> _loadRecipes() async {
@@ -100,36 +106,35 @@ class _RecipeListViewState extends State<RecipeListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '레시피',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-      ),
-      body: RefreshIndicator(
-        onRefresh: _refreshRecipes,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus(); // 키보드 내리기
+        },
+        child: RefreshIndicator(
+          onRefresh: _refreshRecipes,
           child: Column(
             children: [
-              TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: '레시피 검색',
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+              Padding(
+                padding: const EdgeInsets.only(top: 50.0, left: 16.0, right: 16.0), // 텍스트 필드에만 패딩 적용
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: '레시피 검색',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: Colors.grey), // 비활성화 상태 테두리 색깔
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: Theme.of(context).primaryColor), // 포커스 상태 테두리 색깔
+                    ),
+                    filled: true,
                   ),
                 ),
-                onChanged: (query) {
-                  setState(() {
-                    _searchQuery = query;
-                  });
-                },
               ),
               SizedBox(height: 10),
               Expanded(
@@ -154,30 +159,42 @@ class _RecipeListViewState extends State<RecipeListView> {
                             viewModel.fetchRecipeDetail(recipe.id);
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => RecipeDetailView(recipeId: recipe.id)),
-                            );
-                          },
-                          child: Card(
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: ListTile(
-                              contentPadding: EdgeInsets.all(10),
-                              title: Text(
-                                recipe.name,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              MaterialPageRoute(
+                                builder: (context) => RecipeDetailView(recipeId: recipe.id),
                               ),
-                              subtitle: Text(
-                                recipe.ingredients.join(', '),
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
-                                ),
-                                overflow: TextOverflow.ellipsis,
+                            ).then((_) {
+                              FocusScope.of(context).unfocus(); // 상세 페이지에서 돌아왔을 때 키보드 내리기
+                              setState(() {});
+                            });
+                          },
+                          child: Container(
+                            color: index % 2 == 0 ? Colors.grey[100] : Colors.white,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0), // 텍스트에만 패딩 적용
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    recipe.name,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    recipe.ingredients.join(', '),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
                             ),
                           ),
