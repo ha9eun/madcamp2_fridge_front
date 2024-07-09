@@ -143,81 +143,76 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
-    final userViewModel = Provider.of<UserViewModel>(context);
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text('${userViewModel.nickname} 님의 냉장고'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: _confirmLogout,
-          ),
-        ],
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.only(top: 50.0, left: 16.0, right: 16.0, bottom: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '나의 냉장고 재료',
+                  '나의 냉장고',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () async {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AddIngredientDialog(),
-                    );
-                  },
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.history),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HistoryListView()),
+                        );
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (BuildContext context) {
+                            return AddIngredientDialog();
+                          },
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MealDirectInputPage(recipeId: 0)),
-                );
-              },
-              child: Text('식사하기'),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HistoryListView()),
-                );
-              },
-              child: Text('히스토리 보기'),
-            ),
-          ),
-          Expanded(
-            child: Consumer<IngredientViewModel>(
+            SizedBox(height: 16),
+            Consumer<IngredientViewModel>(
               builder: (context, ingredientViewModel, child) {
-                return ListView.builder(
-                  itemCount: ingredientViewModel.ingredients.length,
-                  itemBuilder: (context, index) {
-                    final ingredient = ingredientViewModel.ingredients[index];
+                return Column(
+                  children: ingredientViewModel.ingredients.map((ingredient) {
                     return ListTile(
+                      contentPadding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                       leading: Image.asset(
                         _getCategoryIcon(ingredient.foodCategory),
-                        width: 80,
-                        height: 80,
+                        width: 40,
+                        height: 40,
                       ),
-                      title: Text(ingredient.foodName),
-                      subtitle: Text('양: ${ingredient.amount} ${ingredient.unit}, 유통기한: ${ingredient.expirationDate}'),
+                      title: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: ingredient.foodName,
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black),
+                            ),
+                            TextSpan(
+                              text: ' ${ingredient.amount}${ingredient.unit}',
+                              style: TextStyle(fontSize: 14, color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
+                      subtitle: Text(
+                        '${ingredient.expirationDate.split('-')[0]}년 ${ingredient.expirationDate.split('-')[1]}월 ${ingredient.expirationDate.split('-')[2]}일까지',
+                        style: TextStyle(fontSize: 12),
+                      ),
                       trailing: Container(
                         width: 18,
                         height: 18,
@@ -257,13 +252,35 @@ class _MyPageState extends State<MyPage> {
                         );
                       },
                     );
-                  },
+                  }).toList(),
                 );
               },
             ),
-          ),
-        ],
+            Align(
+              alignment: Alignment.bottomRight,
+              child: IconButton(
+                icon: Icon(Icons.logout),
+                color: Color(0xFF222831),
+                onPressed: _confirmLogout,
+              ),
+            ),
+          ],
+        ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MealDirectInputPage(recipeId: 0),
+            ),
+          );
+        },
+        label: Text('식사하기'),
+        icon: Icon(Icons.fastfood),
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

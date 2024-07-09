@@ -72,13 +72,38 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
     final ingredientViewModel = Provider.of<IngredientViewModel>(context);
     final userViewModel = Provider.of<UserViewModel>(context);
 
-    return AlertDialog(
-      title: Text('재료 추가'),
-      content: SingleChildScrollView(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Container(
+        padding: EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+        ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            Container(
+              width: 40,
+              height: 5,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              '재료 추가',
+              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16.0),
             DropdownButtonFormField<String>(
-              hint: Text('카테고리 선택'),
+              decoration: InputDecoration(
+                labelText: '카테고리 선택',
+                border: OutlineInputBorder(),
+              ),
               value: selectedCategory,
               onChanged: (value) {
                 setState(() {
@@ -96,10 +121,14 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
               ))
                   .toList(),
             ),
+            SizedBox(height: 16.0),
             TextField(
               controller: ingredientController,
               focusNode: ingredientFocusNode,
-              decoration: InputDecoration(labelText: '재료'),
+              decoration: InputDecoration(
+                labelText: '재료',
+                border: OutlineInputBorder(),
+              ),
               onTap: () {
                 setState(() {
                   isIngredientFieldFocused = true;
@@ -137,11 +166,15 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                   },
                 ),
               ),
+            SizedBox(height: 16.0),
             Row(
               children: [
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(labelText: '양'),
+                    decoration: InputDecoration(
+                      labelText: '양',
+                      border: OutlineInputBorder(),
+                    ),
                     keyboardType: TextInputType.number,
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly
@@ -157,11 +190,15 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                 Text(selectedUnit), // 단위 표시
               ],
             ),
+            SizedBox(height: 16.0),
             Row(
               children: [
                 Expanded(
                   child: DropdownButtonFormField<int>(
-                    hint: Text('년'),
+                    decoration: InputDecoration(
+                      labelText: '년',
+                      border: OutlineInputBorder(),
+                    ),
                     value: selectedYear,
                     onChanged: (value) {
                       setState(() {
@@ -179,9 +216,13 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                         .toList(),
                   ),
                 ),
+                SizedBox(width: 8.0),
                 Expanded(
                   child: DropdownButtonFormField<int>(
-                    hint: Text('월'),
+                    decoration: InputDecoration(
+                      labelText: '월',
+                      border: OutlineInputBorder(),
+                    ),
                     value: selectedMonth,
                     onChanged: (value) {
                       setState(() {
@@ -197,9 +238,13 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                         .toList(),
                   ),
                 ),
+                SizedBox(width: 8.0),
                 Expanded(
                   child: DropdownButtonFormField<int>(
-                    hint: Text('일'),
+                    decoration: InputDecoration(
+                      labelText: '일',
+                      border: OutlineInputBorder(),
+                    ),
                     value: selectedDay,
                     onChanged: (value) {
                       setState(() {
@@ -218,42 +263,69 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                 ),
               ],
             ),
+            SizedBox(height: 24.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                  child: Text('취소'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (selectedFoodId != null &&
+                        amount.isNotEmpty &&
+                        selectedYear != null &&
+                        selectedMonth != null &&
+                        selectedDay != null) {
+                      final expirationDate =
+                          '${selectedYear!}-${selectedMonth!.toString().padLeft(2, '0')}-${selectedDay!.toString().padLeft(2, '0')}';
+                      bool success = await ingredientViewModel.addIngredient(
+                        userViewModel.kakaoId,
+                        selectedFoodId!,
+                        int.parse(amount),
+                        expirationDate,
+                      );
+                      if (success) {
+                        Navigator.of(context).pop();
+                      } else {
+                        _showAlertDialog('경고', '이미 냉장고에 존재하는 재료입니다.');
+                      }
+                    } else {
+                      _showAlertDialog('경고', '모든 필드를 입력해 주세요.');
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                  ),
+                  child: Text('추가'),
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text('취소'),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            if (selectedFoodId != null &&
-                amount.isNotEmpty &&
-                selectedYear != null &&
-                selectedMonth != null &&
-                selectedDay != null) {
-              final expirationDate = '${selectedYear!}-${selectedMonth!.toString().padLeft(2, '0')}-${selectedDay!.toString().padLeft(2, '0')}';
-              bool success = await ingredientViewModel.addIngredient(
-                userViewModel.kakaoId,
-                selectedFoodId!,
-                int.parse(amount),
-                expirationDate,
-              );
-              if (success) {
-                Navigator.of(context).pop();
-              } else {
-                _showAlertDialog('경고', '이미 냉장고에 존재하는 재료입니다.');
-              }
-            } else {
-              _showAlertDialog('경고', '모든 필드를 입력해 주세요.');
-            }
-          },
-          child: Text('추가'),
-        ),
-      ],
     );
   }
+}
+
+void showAddIngredientDialog(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: AddIngredientDialog(),
+      );
+    },
+  );
 }
