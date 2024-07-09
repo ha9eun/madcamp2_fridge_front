@@ -52,12 +52,20 @@ class _EditIngredientDialogState extends State<EditIngredientDialog> {
       content: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            TextField(
-              controller: amountController,
-              decoration: InputDecoration(labelText: '양'),
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: amountController,
+                    decoration: InputDecoration(labelText: '양'),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
+                  ),
+                ),
+                SizedBox(width: 8.0), // 텍스트 필드와 단위 사이의 간격
+                Text(widget.ingredient.unit), // 단위 표시
               ],
             ),
             Row(
