@@ -77,109 +77,87 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
         title: Text(
           recipeViewModel.selectedRecipe?.recipeName ?? '상세 레시피',
           style: TextStyle(
-            color: Colors.white,
+            color: Theme.of(context).primaryColor,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Colors.grey[200], // 앱바 색상을 컨텐츠 배경 색상과 통일
+        elevation: 0, // 그림자 제거
+        iconTheme: IconThemeData(color: Colors.black), // 아이콘 색상 변경
       ),
-      body: FutureBuilder<void>(
-        future: _loadDataFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('데이터를 불러오는 중 오류가 발생했습니다.'));
-          } else {
-            final recipe = recipeViewModel.selectedRecipe;
+      body: Container(
+        color: Colors.grey[200], // 컨텐츠 배경 색상
+        child: FutureBuilder<void>(
+          future: _loadDataFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('데이터를 불러오는 중 오류가 발생했습니다.'));
+            } else {
+              final recipe = recipeViewModel.selectedRecipe;
 
-            if (recipe == null) {
-              return Center(child: Text('레시피를 불러올 수 없습니다.'));
+              if (recipe == null) {
+                return Center(child: Text('레시피를 불러올 수 없습니다.'));
+              }
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _videoId != null
+                        ? YoutubePlayer(
+                      controller: _youtubeController!,
+                      showVideoProgressIndicator: true,
+                    )
+                        : Container(
+                      height: 200,
+                      color: Colors.black12,
+                      child: Center(child: Text('YouTube Video Placeholder')),
+                    ),
+                    SizedBox(height: 10),
+                    _buildSectionTitle('재료'),
+                    _buildIngredients(recipe),
+                    _buildDottedDivider(),
+                    _buildSectionTitle('조리 방법'),
+                    _buildRecipeSteps(recipe),
+                    _buildDottedDivider(),
+                    _isLoadingAiComment
+                        ? Center(child: CircularProgressIndicator())
+                        : _showAiComment
+                        ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionTitle('Gemini의 한마디'),
+                        SizedBox(height: 10),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            recipeViewModel.aiComment,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                        : ElevatedButton(
+                      onPressed: _loadAiComment,
+                      child: Text('Gemini의 한마디 보기'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 80), // 추가 패딩
+                  ],
+                ),
+              );
             }
-
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _videoId != null
-                      ? YoutubePlayer(
-                    controller: _youtubeController!,
-                    showVideoProgressIndicator: true,
-                    onReady: () {
-                      _youtubeController!.addListener(() {
-                        if (_youtubeController!.value.isFullScreen) {
-                          // 전체화면 상태가 변경될 때 필요한 작업을 수행합니다.
-                        }
-                      });
-                    },
-                  )
-                      : Container(
-                    height: 200,
-                    color: Colors.black12,
-                    child: Center(child: Text('YouTube Video Placeholder')),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    '재료',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  _buildIngredients(recipe),
-                  SizedBox(height: 20),
-                  Text(
-                    '조리 방법',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  _buildRecipeSteps(recipe),
-                  SizedBox(height: 20),
-                  _isLoadingAiComment
-                      ? Center(child: CircularProgressIndicator())
-                      : _showAiComment
-                      ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Gemini의 한마디',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        recipeViewModel.aiComment,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[800],
-                        ),
-                      ),
-                    ],
-                  )
-                      : ElevatedButton(
-                    onPressed: _loadAiComment,
-                    child: Text('Gemini의 한마디 보기'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: 80), // 추가 패딩
-                ],
-              ),
-            );
-          }
-        },
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -198,57 +176,123 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
     );
   }
 
+  Widget _buildSectionTitle(String title) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(12.0),
+      margin: EdgeInsets.only(top: 5.0, bottom: 10.0, left: 12.0, right: 12.0), // 위아래 마진 조정
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0), // 패딩 추가
+        child: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildIngredients(RecipeDetail recipe) {
-    return Table(
-      border: TableBorder.all(color: Colors.grey),
-      children: [
-        TableRow(children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '재료명',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '양',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-        ]),
-        for (var ingredient in recipe.details)
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Table(
+        border: TableBorder.all(color: Colors.grey),
+        children: [
           TableRow(children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(ingredient.foodName),
+              child: Text(
+                '재료명',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('${ingredient.amount}${ingredient.unit}'),
+              child: Text(
+                '양',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ]),
-      ],
+          for (var ingredient in recipe.details)
+            TableRow(children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(ingredient.foodName),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('${ingredient.amount}${ingredient.unit}'),
+              ),
+            ]),
+        ],
+      ),
     );
   }
 
   Widget _buildRecipeSteps(RecipeDetail recipe) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        for (var step in recipe.recipeContent.split('\n'))
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: Text(
-              step,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
+    // 레시피 콘텐츠를 숫자와 점으로 분리하여 개별 항목으로 나눕니다.
+    List<String> steps = recipe.recipeContent.split(RegExp(r'\d+\.\s')).where((s) => s.isNotEmpty).toList();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (int i = 0; i < steps.length; i++)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Text(
+                '${i + 1}. ${steps[i].trim()}',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
+
+  Widget _buildDottedDivider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0), // 위아래 패딩 조정
+      child: Center(
+        child: CustomPaint(
+          size: Size(double.infinity, 1),
+          painter: DashedLinePainter(),
+        ),
+      ),
+    );
+  }
+}
+
+class DashedLinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey
+      ..strokeWidth = 1;
+
+    const dashWidth = 5.0;
+    const dashSpace = 3.0;
+    double startX = 0;
+
+    while (startX < size.width) {
+      canvas.drawLine(Offset(startX, 0), Offset(startX + dashWidth, 0), paint);
+      startX += dashWidth + dashSpace;
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

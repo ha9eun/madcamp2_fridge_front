@@ -112,6 +112,8 @@ class _RecipeListViewState extends State<RecipeListView> {
         },
         child: RefreshIndicator(
           onRefresh: _refreshRecipes,
+          color: Theme.of(context).primaryColor,
+          backgroundColor: Colors.white,
           child: Column(
             children: [
               Padding(
