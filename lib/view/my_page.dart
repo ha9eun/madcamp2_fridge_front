@@ -182,16 +182,23 @@ class _MyPageState extends State<MyPage> {
                 return Column(
                   children: ingredientViewModel.ingredients.map((ingredient) {
                     return ListTile(
+                      contentPadding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                       leading: Image.asset(
                         _getCategoryIcon(ingredient.foodCategory),
-                        width: 80,
-                        height: 80,
+                        width: 40,
+                        height: 40,
                       ),
-                      title: Text(ingredient.foodName),
-                      subtitle: Text('양: ${ingredient.amount} ${ingredient.unit}, 유통기한: ${ingredient.expirationDate}'),
+                      title: Text(
+                        ingredient.foodName,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      subtitle: Text(
+                        '양: ${ingredient.amount} ${ingredient.unit}, 유통기한: ${ingredient.expirationDate}',
+                        style: TextStyle(fontSize: 12),
+                      ),
                       trailing: Container(
-                        width: 36,
-                        height: 36,
+                        width: 18,
+                        height: 18,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: _getFreshnessColor(ingredient.expirationDate),
