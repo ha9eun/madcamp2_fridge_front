@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:fridge/view_model/ingredient_view_model.dart';
 import 'package:fridge/view_model/user_view_model.dart';
 import 'package:fridge/view/add_ingredient_dialog.dart';
-
+import 'package:fridge/view/history_list_view.dart';
 import '../model/ingredient.dart';
 import '../model/ingredient_service.dart';
 import 'edit_ingredient_dialog.dart';
@@ -142,6 +142,18 @@ class _MyPageState extends State<MyPage> {
                 );
               },
               child: Text('식사하기'),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HistoryListView()),
+                );
+              },
+              child: Text('히스토리 보기'),
             ),
           ),
           Expanded(
