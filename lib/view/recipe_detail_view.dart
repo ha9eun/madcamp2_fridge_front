@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../view_model/recipe_view_model.dart';
 import '../model/recommend_service.dart';
-import '../model/youtube_service.dart'; // YouTubeService를 임포트
-import 'meal_direct_input_page.dart'; // MealDirectInputPage를 임포트
+import '../model/youtube_service.dart';
+import 'meal_direct_input_page.dart';
 import '../model/recipe_model.dart';
 
 class RecipeDetailView extends StatefulWidget {
@@ -20,6 +20,8 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
   Future<void>? _loadDataFuture;
   String? _videoId;
   YoutubePlayerController? _youtubeController;
+  bool _showAiComment = false;
+  bool _isLoadingAiComment = false;
 
   @override
   void initState() {
@@ -31,9 +33,6 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
     final recipeViewModel = Provider.of<RecipeViewModel>(context, listen: false);
     await recipeViewModel.fetchRecipeDetail(widget.recipeId);
     if (recipeViewModel.selectedRecipe != null) {
-      final comment = await RecommendService.getComment(recipeViewModel.selectedRecipe!.recipeName);
-      recipeViewModel.setAiComment(comment);
-
       final videoId = await YouTubeService.fetchVideoId('${recipeViewModel.selectedRecipe!.recipeName} 레시피');
       if (videoId != null) {
         setState(() {
@@ -50,6 +49,19 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
     }
   }
 
+  Future<void> _loadAiComment() async {
+    final recipeViewModel = Provider.of<RecipeViewModel>(context, listen: false);
+    setState(() {
+      _isLoadingAiComment = true;
+    });
+    final comment = await RecommendService.getComment(recipeViewModel.selectedRecipe!.recipeName);
+    recipeViewModel.setAiComment(comment);
+    setState(() {
+      _isLoadingAiComment = false;
+      _showAiComment = true;
+    });
+  }
+
   @override
   void dispose() {
     _youtubeController?.dispose();
@@ -63,7 +75,7 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          recipeViewModel.selectedRecipe?.recipeName ?? '레시피 상세',
+          recipeViewModel.selectedRecipe?.recipeName ?? '상세 레시피',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -80,7 +92,6 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
             return Center(child: Text('데이터를 불러오는 중 오류가 발생했습니다.'));
           } else {
             final recipe = recipeViewModel.selectedRecipe;
-            final aiComment = recipeViewModel.aiComment;
 
             if (recipe == null) {
               return Center(child: Text('레시피를 불러올 수 없습니다.'));
@@ -93,21 +104,21 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
                 children: [
                   _videoId != null
                       ? YoutubePlayer(
-                          controller: _youtubeController!,
-                          showVideoProgressIndicator: true,
-                          onReady: () {
-                            _youtubeController!.addListener(() {
-                              if (_youtubeController!.value.isFullScreen) {
-                                // 전체화면 상태가 변경될 때 필요한 작업을 수행합니다.
-                              }
-                            });
-                          },
-                        )
+                    controller: _youtubeController!,
+                    showVideoProgressIndicator: true,
+                    onReady: () {
+                      _youtubeController!.addListener(() {
+                        if (_youtubeController!.value.isFullScreen) {
+                          // 전체화면 상태가 변경될 때 필요한 작업을 수행합니다.
+                        }
+                      });
+                    },
+                  )
                       : Container(
-                          height: 200,
-                          color: Colors.black12,
-                          child: Center(child: Text('YouTube Video Placeholder')),
-                        ),
+                    height: 200,
+                    color: Colors.black12,
+                    child: Center(child: Text('YouTube Video Placeholder')),
+                  ),
                   SizedBox(height: 10),
                   Text(
                     '재료',
@@ -131,20 +142,36 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
                   SizedBox(height: 10),
                   _buildRecipeSteps(recipe),
                   SizedBox(height: 20),
-                  Text(
-                    'gemini의 한마디',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    aiComment,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[800],
+                  _isLoadingAiComment
+                      ? Center(child: CircularProgressIndicator())
+                      : _showAiComment
+                      ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'gemini의 한마디',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        recipeViewModel.aiComment,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                    ],
+                  )
+                      : ElevatedButton(
+                    onPressed: _loadAiComment,
+                    child: Text('gemini의 한마디 보기'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: Colors.white,
                     ),
                   ),
                   SizedBox(height: 80), // 추가 패딩

@@ -63,6 +63,7 @@ class _RecipeListViewState extends State<RecipeListView> {
               ),
               child: Text('취소'),
               onPressed: () {
+                FocusScope.of(context).unfocus(); // 키보드 내리기
                 Navigator.of(context).pop();
               },
             ),
@@ -149,6 +150,7 @@ class _RecipeListViewState extends State<RecipeListView> {
                         final recipe = filteredRecipes[index];
                         return GestureDetector(
                           onTap: () {
+                            FocusScope.of(context).unfocus(); // 키보드 내리기
                             viewModel.fetchRecipeDetail(recipe.id);
                             Navigator.push(
                               context,
@@ -190,7 +192,10 @@ class _RecipeListViewState extends State<RecipeListView> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showRecommendationPrompt,
+        onPressed: () {
+          FocusScope.of(context).unfocus(); // 키보드 내리기
+          _showRecommendationPrompt();
+        },
         label: Text('AI 추천 받기'),
         backgroundColor: Theme.of(context).primaryColor,
       ),
