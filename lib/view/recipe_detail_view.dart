@@ -202,7 +202,7 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
           Container(
             margin: const EdgeInsets.only(top: 2.0),
             height: 2.0,
-            width: 70.0,
+            width: 312.0,
             color: Theme.of(context).primaryColor,
           ),
         ],
