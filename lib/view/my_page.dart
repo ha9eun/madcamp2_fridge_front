@@ -169,10 +169,13 @@ class _MyPageState extends State<MyPage> {
                     ),
                     IconButton(
                       icon: Icon(Icons.add),
-                      onPressed: () async {
-                        showDialog(
+                      onPressed: () {
+                        showModalBottomSheet(
                           context: context,
-                          builder: (context) => AddIngredientDialog(),
+                          isScrollControlled: true,
+                          builder: (BuildContext context) {
+                            return AddIngredientDialog();
+                          },
                         );
                       },
                     ),
