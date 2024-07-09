@@ -23,7 +23,8 @@ class _MyPageState extends State<MyPage> {
 
   void _loadIngredients() async {
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    final ingredientViewModel = Provider.of<IngredientViewModel>(context, listen: false);
+    final ingredientViewModel = Provider.of<IngredientViewModel>(
+        context, listen: false);
     await ingredientViewModel.fetchIngredients(userViewModel.kakaoId);
   }
 
@@ -43,7 +44,8 @@ class _MyPageState extends State<MyPage> {
             ),
             TextButton(
               onPressed: () {
-                final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+                final userViewModel = Provider.of<UserViewModel>(
+                    context, listen: false);
                 userViewModel.logout(context);
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
@@ -66,7 +68,8 @@ class _MyPageState extends State<MyPage> {
 
   void _deleteIngredient(BuildContext context, Ingredient ingredient) {
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-    final ingredientViewModel = Provider.of<IngredientViewModel>(context, listen: false);
+    final ingredientViewModel = Provider.of<IngredientViewModel>(
+        context, listen: false);
 
     showDialog(
       context: context,
@@ -83,7 +86,8 @@ class _MyPageState extends State<MyPage> {
             ),
             TextButton(
               onPressed: () async {
-                await ingredientViewModel.deleteIngredient(userViewModel.kakaoId, ingredient.fridgeId);
+                await ingredientViewModel.deleteIngredient(
+                    userViewModel.kakaoId, ingredient.fridgeId);
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
               child: Text('확인'),
@@ -97,7 +101,9 @@ class _MyPageState extends State<MyPage> {
   Color _getFreshnessColor(String expirationDate) {
     final now = DateTime.now();
     final expiration = DateTime.parse(expirationDate);
-    final difference = expiration.difference(now).inDays;
+    final difference = expiration
+        .difference(now)
+        .inDays;
 
     if (difference < 0) {
       return Color(0xFF222831); // 검은색
@@ -155,12 +161,12 @@ class _MyPageState extends State<MyPage> {
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
@@ -178,22 +184,7 @@ class _MyPageState extends State<MyPage> {
                 ),
               ],
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MealDirectInputPage(recipeId: 0)),
-                );
-              },
-              child: Text('식사하기'),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
+            ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
@@ -202,14 +193,10 @@ class _MyPageState extends State<MyPage> {
               },
               child: Text('히스토리 보기'),
             ),
-          ),
-          Expanded(
-            child: Consumer<IngredientViewModel>(
+            Consumer<IngredientViewModel>(
               builder: (context, ingredientViewModel, child) {
-                return ListView.builder(
-                  itemCount: ingredientViewModel.ingredients.length,
-                  itemBuilder: (context, index) {
-                    final ingredient = ingredientViewModel.ingredients[index];
+                return Column(
+                  children: ingredientViewModel.ingredients.map((ingredient) {
                     return ListTile(
                       leading: Image.asset(
                         _getCategoryIcon(ingredient.foodCategory),
@@ -219,8 +206,8 @@ class _MyPageState extends State<MyPage> {
                       title: Text(ingredient.foodName),
                       subtitle: Text('양: ${ingredient.amount} ${ingredient.unit}, 유통기한: ${ingredient.expirationDate}'),
                       trailing: Container(
-                        width: 18,
-                        height: 18,
+                        width: 36,
+                        height: 36,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: _getFreshnessColor(ingredient.expirationDate),
@@ -257,13 +244,28 @@ class _MyPageState extends State<MyPage> {
                         );
                       },
                     );
-                  },
+                  }).toList(),
                 );
               },
             ),
-          ),
-        ],
+            SizedBox(height: 80), // 추가 패딩
+          ],
+        ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MealDirectInputPage(recipeId: 0),
+            ),
+          );
+        },
+        label: Text('식사하기'),
+        icon: Icon(Icons.fastfood),
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
