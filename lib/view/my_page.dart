@@ -94,6 +94,37 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
+  String _getCategoryIcon(String category) {
+    switch (category) {
+      case '과일':
+        return 'assets/images/food/image1.png';
+      case '채소':
+        return 'assets/images/food/image2.png';
+      case '쌀/잡곡/견과':
+        return 'assets/images/food/image3.png';
+      case '정육':
+        return 'assets/images/food/image4.png';
+      case '계란':
+        return 'assets/images/food/image5.png';
+      case '수산물':
+        return 'assets/images/food/image6.png';
+      case '유제품':
+        return 'assets/images/food/image7.png';
+      case '밀키트':
+        return 'assets/images/food/image8.png';
+      case '반찬':
+        return 'assets/images/food/image9.png';
+      case '양념/오일':
+        return 'assets/images/food/image10.png';
+      case '생수':
+        return 'assets/images/food/image11.png';
+      case '기타':
+        return 'assets/images/food/image12.png';
+      default:
+        return 'assets/images/food/image12.png'; // 기타로 기본값 설정
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context);
@@ -164,6 +195,11 @@ class _MyPageState extends State<MyPage> {
                   itemBuilder: (context, index) {
                     final ingredient = ingredientViewModel.ingredients[index];
                     return ListTile(
+                      leading: Image.asset(
+                        _getCategoryIcon(ingredient.foodCategory),
+                        width: 40,
+                        height: 40,
+                      ),
                       title: Text(ingredient.foodName),
                       subtitle: Text('양: ${ingredient.amount} ${ingredient.unit}, 유통기한: ${ingredient.expirationDate}'),
                       onLongPress: () {
