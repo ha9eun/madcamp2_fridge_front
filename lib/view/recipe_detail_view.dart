@@ -149,7 +149,7 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'gemini의 한마디',
+                        'Gemini의 한마디',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -168,7 +168,7 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
                   )
                       : ElevatedButton(
                     onPressed: _loadAiComment,
-                    child: Text('gemini의 한마디 보기'),
+                    child: Text('Gemini의 한마디 보기'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor,
                       foregroundColor: Colors.white,
