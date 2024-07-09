@@ -153,30 +153,34 @@ class _MyPageState extends State<MyPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '나의 냉장고 재료',
+                  '나의 냉장고',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () async {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AddIngredientDialog(),
-                    );
-                  },
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.history),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HistoryListView()),
+                        );
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AddIngredientDialog(),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HistoryListView()),
-                );
-              },
-              child: Text('히스토리 보기'),
-            ),
             Consumer<IngredientViewModel>(
               builder: (context, ingredientViewModel, child) {
                 return Column(
@@ -188,12 +192,22 @@ class _MyPageState extends State<MyPage> {
                         width: 40,
                         height: 40,
                       ),
-                      title: Text(
-                        ingredient.foodName,
-                        style: TextStyle(fontSize: 14),
+                      title: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: ingredient.foodName,
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black),
+                            ),
+                            TextSpan(
+                              text: ' ${ingredient.amount}${ingredient.unit}',
+                              style: TextStyle(fontSize: 14, color: Colors.black),
+                            ),
+                          ],
+                        ),
                       ),
                       subtitle: Text(
-                        '양: ${ingredient.amount} ${ingredient.unit}, 유통기한: ${ingredient.expirationDate}',
+                        '${ingredient.expirationDate.split('-')[0]}년 ${ingredient.expirationDate.split('-')[1]}월 ${ingredient.expirationDate.split('-')[2]}일까지',
                         style: TextStyle(fontSize: 12),
                       ),
                       trailing: Container(
@@ -239,16 +253,12 @@ class _MyPageState extends State<MyPage> {
                 );
               },
             ),
-            SizedBox(height: 80), // 추가 패딩
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: _confirmLogout,
+            Align(
+              alignment: Alignment.bottomRight,
+              child: IconButton(
                 icon: Icon(Icons.logout),
-                label: Text('로그아웃'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
+                color: Color(0xFF222831),
+                onPressed: _confirmLogout,
               ),
             ),
           ],
