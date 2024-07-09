@@ -58,29 +58,29 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
         );
         if (fridgeIngredient.fridgeId != 0) { // 일치하는 재료이면
           //레시피 양보다 냉장고 양이 적을 때 처리해서 기본값으로 저장
-          selectedAmounts[fridgeIngredient.fridgeId] = fridgeIngredient.amount < ingredient.amount
+          selectedAmounts[fridgeIngredient.foodId] = fridgeIngredient.amount < ingredient.amount
               ? fridgeIngredient.amount
               : ingredient.amount;
 
           // TextEditingController 생성 및 기본값 설정
-          controllers[fridgeIngredient.fridgeId] = TextEditingController(
-            text: selectedAmounts[fridgeIngredient.fridgeId].toString(),
+          controllers[fridgeIngredient.foodId] = TextEditingController(
+            text: selectedAmounts[fridgeIngredient.foodId].toString(),
           );
         }
       } //for
     }
   }
 
-  void _validateAmount(int fridgeId, int maxAmount, String value) {
+  void _validateAmount(int foodId, int maxAmount, String value) {
     int? newValue = int.tryParse(value);
     setState(() {
       if (newValue == null || newValue <= 0) {
-        errorMessages[fridgeId] = '올바른 값을 입력해 주세요';
+        errorMessages[foodId] = '올바른 값을 입력해 주세요';
       } else if (newValue > maxAmount) {
-        errorMessages[fridgeId] = '남은 양을 초과할 수 없습니다';
+        errorMessages[foodId] = '남은 양을 초과할 수 없습니다';
       } else {
-        errorMessages[fridgeId] = '';
-        selectedAmounts[fridgeId] = newValue;
+        errorMessages[foodId] = '';
+        selectedAmounts[foodId] = newValue;
       }
     });
   }
@@ -145,19 +145,19 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
                     return ListTile(
                       contentPadding: EdgeInsets.symmetric(horizontal: 0.0),
                       leading: Checkbox(
-                        value: selectedAmounts.containsKey(ingredient.fridgeId),
+                        value: selectedAmounts.containsKey(ingredient.foodId),
                         onChanged: (bool? value) {
                           setState(() {
                             if (value == true) { //check
-                              selectedAmounts[ingredient.fridgeId] = 1;
-                              errorMessages[ingredient.fridgeId] = '';
-                              controllers[ingredient.fridgeId] = TextEditingController(
+                              selectedAmounts[ingredient.foodId] = 1;
+                              errorMessages[ingredient.foodId] = '';
+                              controllers[ingredient.foodId] = TextEditingController(
                                 text: '1',
                               );
                             } else {
-                              selectedAmounts.remove(ingredient.fridgeId);
-                              errorMessages.remove(ingredient.fridgeId);
-                              controllers.remove(ingredient.fridgeId);
+                              selectedAmounts.remove(ingredient.foodId);
+                              errorMessages.remove(ingredient.foodId);
+                              controllers.remove(ingredient.foodId);
                             }
                           });
                         },
@@ -170,25 +170,25 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('남은 양: ${ingredient.amount} ${ingredient.unit}, 유통기한: ${ingredient.expirationDate}'),
-                          if (errorMessages.containsKey(ingredient.fridgeId) && errorMessages[ingredient.fridgeId]!.isNotEmpty)
+                          if (errorMessages.containsKey(ingredient.foodId) && errorMessages[ingredient.foodId]!.isNotEmpty)
                             Text(
-                              errorMessages[ingredient.fridgeId]!,
+                              errorMessages[ingredient.foodId]!,
                               style: TextStyle(color: Colors.red, fontSize: 12),
                             ),
                         ],
                       ),
-                      trailing: selectedAmounts.containsKey(ingredient.fridgeId)
+                      trailing: selectedAmounts.containsKey(ingredient.foodId)
                           ? SizedBox(
                         width: 100,
                         child: TextField(
-                          controller: controllers[ingredient.fridgeId],
+                          controller: controllers[ingredient.foodId],
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             hintText: '양',
                             suffixText: ingredient.unit,
                           ),
                           onChanged: (value) {
-                            _validateAmount(ingredient.fridgeId, ingredient.amount, value);
+                            _validateAmount(ingredient.foodId, ingredient.amount, value);
                           },
                         ),
                       )
