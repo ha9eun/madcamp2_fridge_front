@@ -3,11 +3,13 @@ import 'package:provider/provider.dart';
 import '../view_model/community_view_model.dart';
 import 'add_post_page.dart';
 import 'post_detail_page.dart';
+import '../view_model/user_view_model.dart';
 import '../model/board_model.dart';
 
 class CommunityView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final userViewModel = Provider.of<UserViewModel>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -68,7 +70,7 @@ class CommunityView extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddPostPage(writerId: 'currentUserId'), // 실제 사용자 ID로 교체
+              builder: (context) => AddPostPage(writerId: userViewModel.kakaoId), // 실제 사용자 ID로 교체
             ),
           );
         },
