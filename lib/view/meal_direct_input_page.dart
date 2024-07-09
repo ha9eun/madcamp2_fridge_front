@@ -197,6 +197,12 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
                             decoration: InputDecoration(
                               hintText: '양',
                               suffixText: ingredient.unit,
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2), // 기본 테두리 색과 굵기
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2), // 포커스된 테두리 색과 굵기
+                              ),
                             ),
                             onChanged: (value) {
                               _validateAmount(ingredient.foodId, ingredient.amount, value);
