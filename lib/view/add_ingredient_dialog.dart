@@ -101,6 +101,7 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
             Text(
               '재료 추가',
               style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.left, // 텍스트 왼쪽 정렬
             ),
             SizedBox(height: 16.0),
             DropdownButtonFormField<String>(

@@ -23,63 +23,108 @@ class _HistoryListViewState extends State<HistoryListView> {
   }
 
   String _formatDate(DateTime date) {
-    final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
+    final DateFormat formatter = DateFormat('yyyy년 MM월 dd일 HH시 mm분');
     return formatter.format(date);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('히스토리'),
-      ),
+      backgroundColor: Colors.grey[100],
       body: Consumer<HistoryViewModel>(
         builder: (context, historyViewModel, child) {
           if (historyViewModel.isLoading) {
             return Center(child: CircularProgressIndicator());
           }
 
-          return ListView.builder(
-            itemCount: historyViewModel.histories.length,
-            itemBuilder: (context, index) {
-              final reversedIndex = historyViewModel.histories.length - 1 - index;
-              final history = historyViewModel.histories[reversedIndex];
-              return Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: ListTile(
-                  contentPadding: EdgeInsets.all(10),
-                  title: Text(
-                    history.recipeName,
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 50.0, left: 16.0, right: 16.0, bottom: 0.0),
+                  child: Text(
+                    '나의 식사 히스토리',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ...history.ingredients.map((ingredient) => Text(
-                        '${ingredient.foodName}: ${ingredient.amount}${ingredient.unit}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
+                ),
+                Divider(
+                  color: Theme.of(context).primaryColor,
+                  thickness: 2,
+                  endIndent: 16,
+                  indent: 16,
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: historyViewModel.histories.length,
+                  itemBuilder: (context, index) {
+                    final reversedIndex = historyViewModel.histories.length - 1 - index;
+                    final history = historyViewModel.histories[reversedIndex];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
                         ),
-                      )),
-                      Text(
-                        '시간: ${_formatDate(history.time)}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.restaurant_menu, color: Theme.of(context).primaryColor),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    history.recipeName,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8),
+                            ...history.ingredients.map((ingredient) => Padding(
+                              padding: const EdgeInsets.only(bottom: 4.0),
+                              child: Text(
+                                '${ingredient.foodName}: ${ingredient.amount}${ingredient.unit}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            )),
+                            SizedBox(height: 8),
+                            Text(
+                              _formatDate(history.time),
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
-              );
-            },
+              ],
+            ),
           );
         },
       ),

@@ -94,20 +94,13 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
     final ingredientViewModel = Provider.of<IngredientViewModel>(context);
     final userViewModel = Provider.of<UserViewModel>(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('식사하기'),
-      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(top: 50.0, left: 16.0, right: 16.0, bottom: 16.0),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '냉장고 재료 목록',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
               Consumer<RecipeViewModel>(
                 builder: (context, recipeViewModel, child) {
                   if (recipeViewModel.isLoading) {
@@ -115,7 +108,21 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
                   } else if (recipeViewModel.recipes.isEmpty) {
                     return Text('레시피가 없습니다.');
                   } else {
-                    return DropdownButton<Recipe>(
+                    return DropdownButtonFormField<Recipe>(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12), // 모서리 둥글게
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12), // 모서리 둥글게
+                          borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12), // 모서리 둥글게
+                          borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                        ),
+                      ),
+                      dropdownColor: Colors.white,
                       hint: Text('레시피 선택'),
                       value: selectedRecipe,
                       onChanged: (Recipe? newValue) async {
@@ -134,6 +141,7 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
                         );
                       }).toList(),
                     );
+
                   }
                 },
               ),
@@ -145,6 +153,7 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
                     return ListTile(
                       contentPadding: EdgeInsets.symmetric(horizontal: 0.0),
                       leading: Checkbox(
+                        activeColor: Theme.of(context).primaryColor,
                         value: selectedAmounts.containsKey(ingredient.foodId),
                         onChanged: (bool? value) {
                           setState(() {
@@ -169,7 +178,7 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('남은 양: ${ingredient.amount} ${ingredient.unit}, 유통기한: ${ingredient.expirationDate}'),
+                          Text('남은 양: ${ingredient.amount}${ingredient.unit}'),
                           if (errorMessages.containsKey(ingredient.foodId) && errorMessages[ingredient.foodId]!.isNotEmpty)
                             Text(
                               errorMessages[ingredient.foodId]!,
@@ -179,17 +188,26 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
                       ),
                       trailing: selectedAmounts.containsKey(ingredient.foodId)
                           ? SizedBox(
-                        width: 100,
-                        child: TextField(
-                          controller: controllers[ingredient.foodId],
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: '양',
-                            suffixText: ingredient.unit,
+                        width: 50,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8.0), // 오른쪽에 8.0의 패딩 추가
+                          child: TextField(
+                            controller: controllers[ingredient.foodId],
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              hintText: '양',
+                              suffixText: ingredient.unit,
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2), // 기본 테두리 색과 굵기
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2), // 포커스된 테두리 색과 굵기
+                              ),
+                            ),
+                            onChanged: (value) {
+                              _validateAmount(ingredient.foodId, ingredient.amount, value);
+                            },
                           ),
-                          onChanged: (value) {
-                            _validateAmount(ingredient.foodId, ingredient.amount, value);
-                          },
                         ),
                       )
                           : null,
@@ -197,28 +215,47 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
                   },
                 ),
               ),
-              ElevatedButton(
-                onPressed: () async {
-                  if (!_hasValidationErrors()) {
-                    try {
-                      await ingredientViewModel.recordMeal(context, userViewModel.kakaoId, selectedRecipe?.id, selectedAmounts);
+              Align(
+                alignment: Alignment.centerRight, // 버튼을 오른쪽으로 정렬
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (!_hasValidationErrors()) {
+                      try {
+                        await ingredientViewModel.recordMeal(context, userViewModel.kakaoId, selectedRecipe?.id, selectedAmounts);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('식사 기록 완료')),
+                        );
+                        Navigator.pop(context);
+                      } catch (error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('식사 기록 실패: $error')),
+                        );
+                      }
+                    } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('식사 기록 완료')),
-                      );
-                      Navigator.pop(context);
-                    } catch (error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('식사 기록 실패: $error')),
+                        SnackBar(content: Text('입력한 값에 오류가 있습니다.')),
                       );
                     }
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('입력한 값에 오류가 있습니다.')),
-                    );
-                  }
-                },
-                child: Text('식사 완료'),
-              ),
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white, backgroundColor: Theme.of(context).primaryColor, // 글자 색상
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), // 패딩
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12), // 모서리 둥글게
+                    ),
+                    elevation: 5, // 그림자
+                  ),
+                  child: Text(
+                    '식사 완료',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              )
+
+
             ],
           ),
         ),
