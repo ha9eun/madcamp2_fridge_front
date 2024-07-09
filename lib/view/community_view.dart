@@ -56,48 +56,59 @@ class _CommunityViewState extends State<CommunityView> {
             Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: '게시물 검색',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(color: Colors.grey), // 비활성화 상태 테두리 색깔
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(color: Theme.of(context).primaryColor), // 포커스 상태 테두리 색깔
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: '게시물 검색',
+                        prefixIcon: Icon(Icons.search),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 15.0),
                       ),
                     ),
                   ),
                 ),
                 SizedBox(width: 8),
-                DropdownButton<String>(
-                  value: _selectedCategory,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedCategory = newValue!;
-                      Provider.of<CommunityViewModel>(context, listen: false)
-                          .filterPostsByCategory(_selectedCategory);
-                    });
-                  },
-                  items: <String>['전체', '자유', '질문', '공유']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  dropdownColor: Colors.grey[200],
-                  style: TextStyle(color: Colors.black),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _selectedCategory,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedCategory = newValue!;
+                          Provider.of<CommunityViewModel>(context, listen: false)
+                              .filterPostsByCategory(_selectedCategory);
+                        });
+                      },
+                      items: <String>['전체', '자유', '질문', '공유']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Text(value),
+                          ),
+                        );
+                      }).toList(),
+                      dropdownColor: Colors.white,
+                      style: TextStyle(color: Colors.black),
+                      icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).primaryColor),
+                    ),
+                  ),
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 5), // 검색창과 게시글 목록 사이의 간격을 줄임
             Expanded(
               child: Consumer<CommunityViewModel>(
                 builder: (context, viewModel, child) {
