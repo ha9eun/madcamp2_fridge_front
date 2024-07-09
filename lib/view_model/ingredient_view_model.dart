@@ -52,18 +52,21 @@ class IngredientViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> addIngredient(String userId, int foodId, int amount, String expirationDate) async {
-    try {
-      await IngredientService.addIngredient(userId, foodId, amount, expirationDate);
-      // 재료 추가 후 다시 불러오기
-      await fetchIngredients(userId);
-      notifyListeners();
-    } catch (error) {
-      print('재료 추가 실패 $error');
+  Future<bool> addIngredient(String userId, int foodId, int amount, String expirationDate) async {
+
+    bool exists = ingredients.any((ingredient) => ingredient.foodId == foodId);
+    if (exists) {
+      return false;
     }
+    await IngredientService.addIngredient(userId, foodId, amount, expirationDate);
+    // 재료 추가 후 다시 불러오기
+    await fetchIngredients(userId);
+    notifyListeners();
+    return true;
+
   }
 
-  Future<void> recordMeal(BuildContext context, String userId, int recipeId, Map<int, int> selectedAmounts) async {
+  Future<void> recordMeal(BuildContext context, String userId, int? recipeId, Map<int, int> selectedAmounts) async {
     try {
       final userViewModel = Provider.of<UserViewModel>(context, listen: false);
       await IngredientService.recordMeal(selectedAmounts, _ingredients);

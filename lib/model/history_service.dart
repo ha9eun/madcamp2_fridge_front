@@ -4,7 +4,7 @@ import 'dart:convert';
 import '../config.dart';
 
 class HistoryService {
-  static Future<void> addMealHistory(String userId, int recipeId, String dateTime, Map<int, int> selectedAmounts)  async {
+  static Future<void> addMealHistory(String userId, int? recipeId, String dateTime, Map<int, int> selectedAmounts)  async {
     final response = await http.post(
       Uri.parse('${Config.apiUrl}/history/$userId/'),
       headers: <String, String>{
@@ -22,7 +22,7 @@ class HistoryService {
       }),
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode < 200 && response.statusCode >= 300) { // &은 비트 연산자
       throw Exception('Failed to add meal history');
     }
   }
