@@ -174,7 +174,7 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
             ElevatedButton(
               onPressed: () async {
                 try {
-                  await ingredientViewModel.recordMeal(context, userViewModel.kakaoId, selectedRecipe!.id, selectedAmounts);
+                  await ingredientViewModel.recordMeal(context, userViewModel.kakaoId, selectedRecipe?.id, selectedAmounts);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('식사 기록 완료')),
                   );

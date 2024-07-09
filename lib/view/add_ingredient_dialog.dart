@@ -46,6 +46,26 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
     return List<int>.generate(DateUtils.getDaysInMonth(year, month), (i) => i + 1);
   }
 
+  void _showAlertDialog(String title, String content) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final ingredientViewModel = Provider.of<IngredientViewModel>(context);
@@ -200,15 +220,25 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
         ),
         ElevatedButton(
           onPressed: () async {
-            if (selectedFoodId != null && amount.isNotEmpty && selectedYear != null && selectedMonth != null && selectedDay != null) {
+            if (selectedFoodId != null &&
+                amount.isNotEmpty &&
+                selectedYear != null &&
+                selectedMonth != null &&
+                selectedDay != null) {
               final expirationDate = '${selectedYear!}-${selectedMonth!.toString().padLeft(2, '0')}-${selectedDay!.toString().padLeft(2, '0')}';
-              await ingredientViewModel.addIngredient(
+              bool success = await ingredientViewModel.addIngredient(
                 userViewModel.kakaoId,
                 selectedFoodId!,
                 int.parse(amount),
                 expirationDate,
               );
-              Navigator.of(context).pop();
+              if (success) {
+                Navigator.of(context).pop();
+              } else {
+                _showAlertDialog('경고', '이미 냉장고에 존재하는 재료입니다.');
+              }
+            } else {
+              _showAlertDialog('경고', '모든 필드를 입력해 주세요.');
             }
           },
           child: Text('추가'),
