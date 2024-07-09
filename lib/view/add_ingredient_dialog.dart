@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:fridge/view_model/ingredient_view_model.dart';
 import 'package:fridge/view_model/user_view_model.dart';
@@ -13,7 +15,7 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
   String? selectedCategory;
   int? selectedFoodId;
   String amount = '';
-  String selectedUnit = '';  // 단위를 저장할 변수 추가
+  String selectedUnit = ''; // 단위를 저장할 변수 추가
   int? selectedYear;
   int? selectedMonth;
   int? selectedDay;
@@ -52,14 +54,16 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: Text(title),
-          content: Text(content),
+          content: Text(content,),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('확인'),
+              child: Text('확인',
+                style: TextStyle(color: Theme.of(context).primaryColor),),
             ),
           ],
         );
@@ -100,9 +104,21 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
             ),
             SizedBox(height: 16.0),
             DropdownButtonFormField<String>(
+              dropdownColor: Colors.white,
               decoration: InputDecoration(
                 labelText: '카테고리 선택',
-                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.category, color: Theme.of(context).primaryColor),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                ),
               ),
               value: selectedCategory,
               onChanged: (value) {
@@ -127,7 +143,18 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
               focusNode: ingredientFocusNode,
               decoration: InputDecoration(
                 labelText: '재료',
-                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.fastfood, color: Theme.of(context).primaryColor),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                ),
               ),
               onTap: () {
                 setState(() {
@@ -169,11 +196,23 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
             SizedBox(height: 16.0),
             Row(
               children: [
-                Expanded(
+                Flexible(
+                  flex: 3, // 줄어든 flex 값
                   child: TextField(
                     decoration: InputDecoration(
                       labelText: '양',
-                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.scale, color: Theme.of(context).primaryColor),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                      ),
                     ),
                     keyboardType: TextInputType.number,
                     inputFormatters: <TextInputFormatter>[
@@ -187,17 +226,36 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                   ),
                 ),
                 SizedBox(width: 8.0), // 텍스트 필드와 단위 사이의 간격
-                Text(selectedUnit), // 단위 표시
+                Flexible(
+                  flex: 1, // 단위 부분을 위한 flex 값
+                  child: Text(
+                    selectedUnit,
+                    style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor),
+                  ),
+                ),
+                // 단위 표시
               ],
             ),
             SizedBox(height: 16.0),
             Row(
               children: [
-                Expanded(
+                Flexible(
+                  flex: 2, // 줄어든 flex 값
                   child: DropdownButtonFormField<int>(
+                    dropdownColor: Colors.white,
                     decoration: InputDecoration(
                       labelText: '년',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                      ),
                     ),
                     value: selectedYear,
                     onChanged: (value) {
@@ -217,11 +275,23 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                   ),
                 ),
                 SizedBox(width: 8.0),
-                Expanded(
+                Flexible(
+                  flex: 2, // 줄어든 flex 값
                   child: DropdownButtonFormField<int>(
+                    dropdownColor: Colors.white,
                     decoration: InputDecoration(
                       labelText: '월',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                      ),
                     ),
                     value: selectedMonth,
                     onChanged: (value) {
@@ -239,11 +309,23 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                   ),
                 ),
                 SizedBox(width: 8.0),
-                Expanded(
+                Flexible(
+                  flex: 2, // 줄어든 flex 값
                   child: DropdownButtonFormField<int>(
+                    dropdownColor: Colors.white,
                     decoration: InputDecoration(
                       labelText: '일',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                      ),
                     ),
                     value: selectedDay,
                     onChanged: (value) {
@@ -267,16 +349,24 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                TextButton(
+                ElevatedButton.icon(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.red,
+                  icon: Icon(Icons.cancel, color: Theme.of(context).primaryColor),
+                  label: Text(
+                    '취소',
+                    style: TextStyle(color: Theme.of(context).primaryColor),
                   ),
-                  child: Text('취소'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    side: BorderSide(color: Theme.of(context).primaryColor),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                 ),
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: () async {
                     if (selectedFoodId != null &&
                         amount.isNotEmpty &&
@@ -294,16 +384,24 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                       if (success) {
                         Navigator.of(context).pop();
                       } else {
-                        _showAlertDialog('경고', '이미 냉장고에 존재하는 재료입니다.');
+                        _showAlertDialog('', '이미 냉장고에 존재하는 재료입니다.');
                       }
                     } else {
-                      _showAlertDialog('경고', '모든 필드를 입력해 주세요.');
+                      _showAlertDialog('', '모든 필드를 입력해 주세요.');
                     }
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                  icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
+                  label: Text(
+                    '추가',
+                    style: TextStyle(color: Theme.of(context).primaryColor),
                   ),
-                  child: Text('추가'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    side: BorderSide(color: Theme.of(context).primaryColor),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -313,6 +411,8 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
     );
   }
 }
+
+
 
 void showAddIngredientDialog(BuildContext context) {
   showModalBottomSheet(
