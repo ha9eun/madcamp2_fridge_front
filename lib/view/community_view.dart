@@ -66,7 +66,7 @@ class _CommunityViewState extends State<CommunityView> {
               );
             }).toList(),
             dropdownColor: Colors.grey[200],
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.black),
           ),
         ],
       ),
