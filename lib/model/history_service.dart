@@ -12,7 +12,7 @@ class HistoryService {
       },
       body: jsonEncode(<String, dynamic>{
         'recipe_id': recipeId,
-        'dime': dateTime,
+        'time': dateTime,
         'details': selectedAmounts.entries.map((entry) {
           return {
             'food_id': entry.key,
