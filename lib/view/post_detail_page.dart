@@ -31,7 +31,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
     final userId = userViewModel.kakaoId;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Post Details'),
+        title: Text('글 상세보기'),
         actions: [
           Consumer<CommunityViewModel>(
             builder: (context, viewModel, child) {
@@ -66,23 +66,25 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 Text(post.createdAt, style: TextStyle(color: Colors.grey)),
                 SizedBox(height: 8),
                 Text(post.content),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CommentPage(postId: widget.postId),
-                      ),
-                    );
-                  },
-                  child: Text('댓글 보기'),
-                ),
               ],
             ),
           );
         },
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CommentPage(postId: widget.postId),
+            ),
+          );
+        },
+        label: Text('댓글 보기'),
+        icon: Icon(Icons.comment),
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -94,7 +96,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           children: [
             ListTile(
               leading: Icon(Icons.edit),
-              title: Text('Edit'),
+              title: Text('수정'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -107,7 +109,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
             ),
             ListTile(
               leading: Icon(Icons.delete),
-              title: Text('Delete'),
+              title: Text('삭제'),
               onTap: () {
                 Navigator.pop(context);
                 _confirmDeletePost(post.boardId);
@@ -124,15 +126,15 @@ class _PostDetailPageState extends State<PostDetailPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Delete Post'),
-          content: Text('Are you sure you want to delete this post?'),
+          title: Text('삭제 확인'),
+          content: Text('이 글을 삭제하시겠습니까?'),
           backgroundColor: Color(0xFFEEEEEE), // 연한 배경색 설정
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Cancel'),
+              child: Text('취소'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -142,7 +144,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   Navigator.pop(context);
                 });
               },
-              child: Text('Delete'),
+              child: Text('삭제'),
             ),
           ],
         );

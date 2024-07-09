@@ -39,7 +39,6 @@ class _AddPostPageState extends State<AddPostPage> {
     Provider.of<CommunityViewModel>(context, listen: false)
         .addPost(post)
         .then((_) {
-      Fluttertoast.showToast(msg: '등록되었습니다');
       Navigator.pop(context);
     });
   }
