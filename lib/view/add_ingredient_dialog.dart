@@ -13,6 +13,7 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
   String? selectedCategory;
   int? selectedFoodId;
   String amount = '';
+  String selectedUnit = '';  // 단위를 저장할 변수 추가
   int? selectedYear;
   int? selectedMonth;
   int? selectedDay;
@@ -126,6 +127,7 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                       onTap: () {
                         setState(() {
                           selectedFoodId = ingredient['food_id'];
+                          selectedUnit = ingredient['unit']; // 단위 설정
                           ingredientController.text = ingredient['food_name'];
                           isIngredientFieldFocused = false;
                           ingredientFocusNode.unfocus(); // 포커스 제거
@@ -135,17 +137,25 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                   },
                 ),
               ),
-            TextField(
-              decoration: InputDecoration(labelText: '양'),
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(labelText: '양'),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        amount = value;
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(width: 8.0), // 텍스트 필드와 단위 사이의 간격
+                Text(selectedUnit), // 단위 표시
               ],
-              onChanged: (value) {
-                setState(() {
-                  amount = value;
-                });
-              },
             ),
             Row(
               children: [
