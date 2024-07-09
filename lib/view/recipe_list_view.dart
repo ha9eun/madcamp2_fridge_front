@@ -38,8 +38,8 @@ class _RecipeListViewState extends State<RecipeListView> {
       builder: (context) {
         String prompt = '';
         return AlertDialog(
-          backgroundColor: Color(0xFFEEEEEE), // 연한 배경색 설정
-          title: Text('AI 레시피 추천'),
+          backgroundColor: Colors.white, // 연한 배경색 설정
+          title: Text('AI 레시피 추천',style: TextStyle(fontSize: 20),),
           content: TextField(
             onChanged: (value) {
               prompt = value;
@@ -128,11 +128,11 @@ class _RecipeListViewState extends State<RecipeListView> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide(color: Colors.grey), // 비활성화 상태 테두리 색깔
+                      borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2), // 비활성화 상태 테두리 색깔
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide(color: Theme.of(context).primaryColor), // 포커스 상태 테두리 색깔
+                      borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2), // 포커스 상태 테두리 색깔
                     ),
                     filled: true,
                   ),
@@ -143,7 +143,11 @@ class _RecipeListViewState extends State<RecipeListView> {
                 child: Consumer<RecipeViewModel>(
                   builder: (context, viewModel, child) {
                     if (viewModel.isLoading) {
-                      return Center(child: CircularProgressIndicator());
+                      return Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                        ),
+                      );
                     }
 
                     final filteredRecipes = viewModel.recipes.where((recipe) {
@@ -151,7 +155,7 @@ class _RecipeListViewState extends State<RecipeListView> {
                     }).toList();
 
                     return ListView.builder(
-                      padding: EdgeInsets.only(bottom: 80),
+                      padding: EdgeInsets.only(bottom: 80, left: 16, right: 16),
                       itemCount: filteredRecipes.length,
                       itemBuilder: (context, index) {
                         final recipe = filteredRecipes[index];
@@ -170,34 +174,40 @@ class _RecipeListViewState extends State<RecipeListView> {
                             });
                           },
                           child: Container(
-                            color: index % 2 == 0 ? Colors.grey[100] : Colors.white,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0), // 텍스트에만 패딩 적용
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    recipe.name,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                            padding: EdgeInsets.symmetric(vertical: 10.0),
+                            child: Row(
+                              children: [
+                                Icon(Icons.restaurant_menu, color: Theme.of(context).primaryColor),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        recipe.name,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                        recipe.ingredients.join(', '),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(height: 5),
-                                  Text(
-                                    recipe.ingredients.join(', '),
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[600],
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
+                                ),
+                                Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+                              ],
                             ),
                           ),
                         );
