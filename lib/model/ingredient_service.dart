@@ -93,21 +93,21 @@ class IngredientService {
 
   static Future<void> recordMeal(Map<int, int> usedIngredients, List<Ingredient> ingredients) async {
     for (var entry in usedIngredients.entries) {
-      int fridgeId = entry.key;
+      int foodId = entry.key;
       int usedAmount = entry.value;
 
       // Find the ingredient in the current list
-      Ingredient? ingredient = ingredients.firstWhere((ing) => ing.fridgeId == fridgeId);
+      Ingredient? ingredient = ingredients.firstWhere((ing) => ing.foodId == foodId);
 
 
       int newAmount = ingredient.amount - usedAmount;
 
       if (newAmount > 0) {
         // Update the ingredient with the new amount
-        await updateIngredient(fridgeId, newAmount, ingredient.expirationDate);
+        await updateIngredient(ingredient.fridgeId, newAmount, ingredient.expirationDate);
       } else {
         // Delete the ingredient if the amount is zero or less
-        await deleteIngredient(fridgeId);
+        await deleteIngredient(ingredient.fridgeId);
       }
 
     }
