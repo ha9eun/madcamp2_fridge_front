@@ -4,6 +4,8 @@ import 'package:fridge/model/ingredient.dart';
 import 'package:fridge/view_model/user_view_model.dart';
 import 'package:provider/provider.dart';
 
+import '../model/history_service.dart';
+
 class IngredientViewModel extends ChangeNotifier {
   List<Ingredient> _ingredients = [];
   List<Map<String, dynamic>> _allIngredients = [];
@@ -61,16 +63,20 @@ class IngredientViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> recordMeal(BuildContext context, Map<int, int> usedIngredients) async {
+  Future<void> recordMeal(BuildContext context, String userId, int recipeId, Map<int, int> selectedAmounts) async {
     try {
       final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-      await IngredientService.recordMeal(usedIngredients, _ingredients);
+      await IngredientService.recordMeal(selectedAmounts, _ingredients);
+      final now = DateTime.now().toIso8601String();
+      await HistoryService.addMealHistory(userId, recipeId, now, selectedAmounts);
       await fetchIngredients(userViewModel.kakaoId); // 식사 후 재료 목록 다시 불러오기
       notifyListeners();
     } catch (error) {
       print('식사 기록 실패 $error');
     }
   }
+
+
 
   List<String> get categories {
     return _allIngredients.map((ingredient) => ingredient['food_category'] as String).toSet().toList();

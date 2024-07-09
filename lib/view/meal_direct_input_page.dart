@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fridge/view_model/user_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:fridge/view_model/ingredient_view_model.dart';
 import 'package:fridge/view_model/recipe_view_model.dart';
@@ -60,7 +61,7 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
   @override
   Widget build(BuildContext context) {
     final ingredientViewModel = Provider.of<IngredientViewModel>(context);
-
+    final userViewModel = Provider.of<UserViewModel>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('식사하기'),
@@ -171,17 +172,18 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                ingredientViewModel.recordMeal(context, selectedAmounts).then((_) {
+              onPressed: () async {
+                try {
+                  await ingredientViewModel.recordMeal(context, userViewModel.kakaoId, selectedRecipe!.id, selectedAmounts);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('식사 기록 완료')),
                   );
                   Navigator.pop(context);
-                }).catchError((error) {
+                } catch (error) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('식사 기록 실패: $error')),
                   );
-                });
+                }
               },
               child: Text('식사 완료'),
             ),
