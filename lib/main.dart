@@ -9,6 +9,7 @@ import 'view/login_page.dart';
 import 'view/home_page.dart';
 import 'view/splash_screen.dart';
 import 'view_model/recipe_view_model.dart';
+import 'view_model/history_view_model.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,7 @@ void main() {
             create: (context) => RecipeViewModel()..fetchRecipes()),
         ChangeNotifierProvider(create: (context) => IngredientViewModel()),
         ChangeNotifierProvider(create: (context) => CommunityViewModel()),
+        ChangeNotifierProvider(create: (context) => HistoryViewModel()),
       ],
       child: MyApp(),
     ),
