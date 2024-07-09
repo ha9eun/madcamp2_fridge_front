@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:fridge/view_model/user_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart'; // 추가된 import
 import '../view_model/community_view_model.dart';
 import '../model/board_model.dart';
+import '../model/comment_model.dart';
+import '../view_model/user_view_model.dart';
 import 'edit_post_page.dart';
-import 'comment_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class PostDetailPage extends StatefulWidget {
@@ -17,18 +18,28 @@ class PostDetailPage extends StatefulWidget {
 }
 
 class _PostDetailPageState extends State<PostDetailPage> {
+  final TextEditingController commentController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<CommunityViewModel>(context, listen: false).fetchComments(widget.postId);
+      final communityViewModel = Provider.of<CommunityViewModel>(context, listen: false);
+      communityViewModel.fetchComments(widget.postId);
+      communityViewModel.fetchPosts();
     });
+  }
+
+  String formatDateTime(String dateTime) {
+    final parsedDate = DateTime.parse(dateTime);
+    return DateFormat('yyyy-MM-dd HH:mm').format(parsedDate);
   }
 
   @override
   Widget build(BuildContext context) {
     final UserViewModel userViewModel = Provider.of<UserViewModel>(context);
     final userId = userViewModel.kakaoId;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('글 상세보기'),
@@ -55,36 +66,113 @@ class _PostDetailPageState extends State<PostDetailPage> {
             return Center(child: CircularProgressIndicator());
           }
           final post = viewModel.boards.firstWhere((board) => board.boardId == widget.postId);
+          final comments = viewModel.comments.where((comment) => comment.boardId == widget.postId).toList();
 
-          return Padding(
+          return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(post.title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
-                Text(post.createdAt, style: TextStyle(color: Colors.grey)),
+                Row(
+                  children: [
+                    Text('글쓴이: ${post.writerNickname ?? 'Anonymous'}', style: TextStyle(color: Colors.grey)),
+                    Spacer(),
+                    Text(formatDateTime(post.createdAt), style: TextStyle(color: Colors.grey)),
+                  ],
+                ),
                 SizedBox(height: 8),
-                Text(post.content),
+                Divider(),
+                Text(post.content, style: TextStyle(fontSize: 16)),
+                SizedBox(height: 20),
+                Divider(),
+                Text('댓글', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                SizedBox(height: 10),
+                ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: comments.length,
+                  itemBuilder: (context, index) {
+                    final comment = comments[index];
+                    return _buildCommentTile(comment, userId);
+                  },
+                ),
+                SizedBox(height: 20),
+                TextField(
+                  controller: commentController,
+                  decoration: InputDecoration(
+                    labelText: '댓글을 입력하세요',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+                SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    final content = commentController.text;
+                    final newComment = Comment(
+                      commentId: 0,
+                      boardId: widget.postId,
+                      parentId: null,
+                      writerId: userViewModel.kakaoId,
+                      content: content,
+                      createdAt: DateTime.now().toString(),
+                    );
+
+                    Provider.of<CommunityViewModel>(context, listen: false)
+                        .addComment(newComment)
+                        .then((_) {
+                      commentController.clear();
+                    });
+                  },
+                  child: Text('댓글 추가'),
+                ),
               ],
             ),
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CommentPage(postId: widget.postId),
+    );
+  }
+
+  Widget _buildCommentTile(Comment comment, String userId) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.grey[300]!),
+        ),
+        padding: EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              comment.writerNickname ?? 'Anonymous',
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-          );
-        },
-        label: Text('댓글 보기'),
-        icon: Icon(Icons.comment),
-        backgroundColor: Theme.of(context).primaryColor,
+            SizedBox(height: 5),
+            Text(comment.content),
+            SizedBox(height: 5),
+            Text(formatDateTime(comment.createdAt), style: TextStyle(color: Colors.grey, fontSize: 12)),
+            if (comment.writerId == userId)
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: Icon(Icons.delete, size: 20),
+                  onPressed: () {
+                    Provider.of<CommunityViewModel>(context, listen: false)
+                        .deleteComment(comment.commentId, widget.postId)
+                        .then((_) {
+                      commentController.clear();
+                    });
+                  },
+                ),
+              ),
+          ],
+        ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
