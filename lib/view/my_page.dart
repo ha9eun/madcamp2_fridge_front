@@ -94,6 +94,22 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
+  Color _getFreshnessColor(String expirationDate) {
+    final now = DateTime.now();
+    final expiration = DateTime.parse(expirationDate);
+    final difference = expiration.difference(now).inDays;
+
+    if (difference < 0) {
+      return Color(0xFF222831); // 검은색
+    } else if (difference <= 3) {
+      return Color(0xFFF05454); // 빨간색
+    } else if (difference <= 7) {
+      return Color(0xFFFFC107); // 노란색
+    } else {
+      return Color(0xFF4CAF50); // 초록색
+    }
+  }
+
   String _getCategoryIcon(String category) {
     switch (category) {
       case '과일':
@@ -197,11 +213,19 @@ class _MyPageState extends State<MyPage> {
                     return ListTile(
                       leading: Image.asset(
                         _getCategoryIcon(ingredient.foodCategory),
-                        width: 40,
-                        height: 40,
+                        width: 80,
+                        height: 80,
                       ),
                       title: Text(ingredient.foodName),
                       subtitle: Text('양: ${ingredient.amount} ${ingredient.unit}, 유통기한: ${ingredient.expirationDate}'),
+                      trailing: Container(
+                        width: 18,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _getFreshnessColor(ingredient.expirationDate),
+                        ),
+                      ),
                       onLongPress: () {
                         showModalBottomSheet(
                           context: context,
