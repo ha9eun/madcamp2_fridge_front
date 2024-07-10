@@ -124,3 +124,4 @@ Gemini의 한마디 버튼을 누르면 `gemini API`와 연결되어 입맛을 �
 
 ## APK File
 
+https://drive.google.com/file/d/11B_tc5nMHCsMf3OskABfY9taILpB65F_/view?usp=sharing
