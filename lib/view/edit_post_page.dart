@@ -64,7 +64,7 @@ class _EditPostPageState extends State<EditPostPage> {
               padding: EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border.all(color: Colors.grey),
+                border: Border.all(color: Theme.of(context).primaryColor, width: 2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
@@ -74,8 +74,12 @@ class _EditPostPageState extends State<EditPostPage> {
                     controller: titleController,
                     decoration: InputDecoration(
                       labelText: '제목',
+                      labelStyle: TextStyle(color: Colors.black),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor),
                       ),
                     ),
                   ),
@@ -102,8 +106,12 @@ class _EditPostPageState extends State<EditPostPage> {
                     controller: contentController,
                     decoration: InputDecoration(
                       labelText: '글 내용',
+                      labelStyle: TextStyle(color: Colors.black),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor),
                       ),
                     ),
                     maxLines: 5,
@@ -112,10 +120,19 @@ class _EditPostPageState extends State<EditPostPage> {
               ),
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _editPost,
-              child: Text('글 수정'),
-            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end, // 버튼을 우측으로 옮김
+              children: [
+                ElevatedButton(
+                  onPressed: _editPost,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Theme.of(context).primaryColor,
+                  ),
+                  child: Text('글 수정', style: TextStyle(color: Theme.of(context).primaryColor)), // 폰트 색을 primaryColor로 설정
+                ),
+              ],
+            )
           ],
         ),
       ),

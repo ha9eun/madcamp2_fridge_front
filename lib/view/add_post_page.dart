@@ -56,7 +56,7 @@ class _AddPostPageState extends State<AddPostPage> {
               padding: EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border.all(color: Colors.grey),
+                border: Border.all(color: Theme.of(context).primaryColor, width: 2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
@@ -66,8 +66,12 @@ class _AddPostPageState extends State<AddPostPage> {
                     controller: titleController,
                     decoration: InputDecoration(
                       labelText: '제목',
+                      labelStyle: TextStyle(color: Colors.black),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor),
                       ),
                     ),
                   ),
@@ -87,15 +91,19 @@ class _AddPostPageState extends State<AddPostPage> {
                         child: Text(value),
                       );
                     }).toList(),
-                    dropdownColor: Colors.grey[200], // 드롭다운 배경색 변경
+                    dropdownColor: Colors.white, // 드롭다운 배경색 변경
                     style: TextStyle(color: Colors.black), // 드롭다운 텍스트 색상 변경
                   ),
                   TextField(
                     controller: contentController,
                     decoration: InputDecoration(
                       labelText: '글 내용',
+                      labelStyle: TextStyle(color: Colors.black),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor),
                       ),
                     ),
                     maxLines: 5,
@@ -104,10 +112,19 @@ class _AddPostPageState extends State<AddPostPage> {
               ),
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _addPost,
-              child: Text('글 등록'),
-            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end, // 버튼을 우측으로 옮김
+              children: [
+                ElevatedButton(
+                  onPressed: _addPost,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Theme.of(context).primaryColor,
+                  ),
+                  child: Text('글 등록', style: TextStyle(color: Theme.of(context).primaryColor)), // 폰트 색을 primaryColor로 설정
+                ),
+              ],
+            )
           ],
         ),
       ),
