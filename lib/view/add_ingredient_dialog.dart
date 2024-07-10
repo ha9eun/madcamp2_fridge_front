@@ -108,6 +108,7 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
               dropdownColor: Colors.white,
               decoration: InputDecoration(
                 labelText: '카테고리 선택',
+                labelStyle: TextStyle(color: Theme.of(context).primaryColor),
                 prefixIcon: Icon(Icons.category, color: Theme.of(context).primaryColor),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -146,6 +147,7 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
               focusNode: ingredientFocusNode,
               decoration: InputDecoration(
                 labelText: '재료',
+                labelStyle: TextStyle(color: Theme.of(context).primaryColor),
                 prefixIcon: Icon(Icons.fastfood, color: Theme.of(context).primaryColor),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -206,6 +208,7 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                   child: TextField(
                     decoration: InputDecoration(
                       labelText: '양',
+                      labelStyle: TextStyle(color: Theme.of(context).primaryColor),
                       prefixIcon: Icon(Icons.scale, color: Theme.of(context).primaryColor),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -250,6 +253,7 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                     dropdownColor: Colors.white,
                     decoration: InputDecoration(
                       labelText: '년',
+                      labelStyle: TextStyle(color: Theme.of(context).primaryColor),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -286,6 +290,7 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                     dropdownColor: Colors.white,
                     decoration: InputDecoration(
                       labelText: '월',
+                      labelStyle: TextStyle(color: Theme.of(context).primaryColor),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -320,6 +325,7 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                     dropdownColor: Colors.white,
                     decoration: InputDecoration(
                       labelText: '일',
+                      labelStyle: TextStyle(color: Theme.of(context).primaryColor),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
