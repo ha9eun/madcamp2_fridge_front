@@ -58,7 +58,13 @@ class _EditIngredientDialogState extends State<EditIngredientDialog> {
                 Expanded(
                   child: TextField(
                     controller: amountController,
-                    decoration: InputDecoration(labelText: '양'),
+                    decoration: InputDecoration(
+                        labelText: '양',
+                      labelStyle: TextStyle(color: Colors.black),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                      ),
+                    ),
                     keyboardType: TextInputType.number,
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly
