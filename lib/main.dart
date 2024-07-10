@@ -9,6 +9,7 @@ import 'view/login_page.dart';
 import 'view/home_page.dart';
 import 'view_model/recipe_view_model.dart';
 import 'view_model/history_view_model.dart';
+import 'view/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,8 +53,9 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      initialRoute: '/login',
+      initialRoute: '/',
       routes: {
+        '/': (context) => SplashScreen(),
         '/login': (context) => LoginPage(),
         '/home': (context) => HomePage(),
       },
