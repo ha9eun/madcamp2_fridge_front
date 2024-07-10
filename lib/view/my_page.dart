@@ -75,6 +75,7 @@ class _MyPageState extends State<MyPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: Text('삭제'),
           content: Text('정말로 이 재료를 삭제하시겠습니까?'),
           actions: <Widget>[
@@ -82,14 +83,20 @@ class _MyPageState extends State<MyPage> {
               onPressed: () {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
-              child: Text('취소'),
+              child: Text(
+                '취소',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
             ),
             TextButton(
               onPressed: () async {
                 await ingredientViewModel.deleteIngredient(userViewModel.kakaoId, ingredient.fridgeId);
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
-              child: Text('확인'),
+              child: Text(
+                '확인',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
             ),
           ],
         );

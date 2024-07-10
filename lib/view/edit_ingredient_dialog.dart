@@ -48,6 +48,7 @@ class _EditIngredientDialogState extends State<EditIngredientDialog> {
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
 
     return AlertDialog(
+      backgroundColor: Colors.white,
       title: Text('재료 수정'),
       content: SingleChildScrollView(
         child: Column(
@@ -137,7 +138,10 @@ class _EditIngredientDialogState extends State<EditIngredientDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('취소'),
+          child: Text(
+              '취소',
+              style: TextStyle(color: Theme.of(context).primaryColor),
+          ),
         ),
         ElevatedButton(
           onPressed: () async {
@@ -153,7 +157,10 @@ class _EditIngredientDialogState extends State<EditIngredientDialog> {
               Navigator.of(context).pop();
             }
           },
-          child: Text('수정'),
+          child: Text(
+            '수정',
+            style: TextStyle(color: Theme.of(context).primaryColor),
+          ),
         ),
       ],
     );
