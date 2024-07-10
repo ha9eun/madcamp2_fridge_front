@@ -46,8 +46,8 @@ class _MyPageState extends State<MyPage> {
             TextButton(
               onPressed: () {
                 final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-                userViewModel.logout(context);
                 Navigator.of(context).pop(); // 다이얼로그 닫기
+                userViewModel.logout(context);
               },
               child: Text('확인',
                 style: TextStyle(color: Theme.of(context).primaryColor),),
