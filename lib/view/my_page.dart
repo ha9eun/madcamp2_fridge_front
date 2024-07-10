@@ -33,30 +33,36 @@ class _MyPageState extends State<MyPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: Text('로그아웃', style: TextStyle(fontSize: 20),),
+          title: Text('로그아웃', style: TextStyle(fontSize: 20)),
           content: Text('로그아웃 하시겠습니까?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
-              child: Text('취소',
-              style: TextStyle(color: Theme.of(context).primaryColor),),
+              child: Text(
+                '취소',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
             ),
             TextButton(
               onPressed: () {
-                final userViewModel = Provider.of<UserViewModel>(context, listen: false);
                 Navigator.of(context).pop(); // 다이얼로그 닫기
-                userViewModel.logout(context);
+                final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+                userViewModel.logout(context); // 로그아웃 함수 호출
               },
-              child: Text('확인',
-                style: TextStyle(color: Theme.of(context).primaryColor),),
+              child: Text(
+                '확인',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
             ),
           ],
         );
       },
     );
   }
+
+
 
   void _editIngredient(BuildContext context, Ingredient ingredient) {
     showDialog(

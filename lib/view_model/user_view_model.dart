@@ -111,7 +111,9 @@ class UserViewModel extends ChangeNotifier {
       print('카카오 로그아웃 함수 완료');
       await clearUserInfo();
       print('로그아웃 완료');
-      Navigator.pushReplacementNamed(context, '/login');
+      if (context.mounted) {
+        Navigator.pushReplacementNamed(context, '/login');
+      }
     } catch (error) {
       print('로그아웃 실패: $error');
     }

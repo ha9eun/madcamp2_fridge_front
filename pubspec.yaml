@@ -88,6 +88,7 @@ flutter:
     - assets/images/food/image11.png
     - assets/images/food/image12.png
     - assets/images/fridge_logo.png
+    - assets/images/냉장고를 부탁해 배너.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

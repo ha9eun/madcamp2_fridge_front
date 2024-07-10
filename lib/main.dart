@@ -7,7 +7,6 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'view_model/user_view_model.dart';
 import 'view/login_page.dart';
 import 'view/home_page.dart';
-import 'view/splash_screen.dart';
 import 'view_model/recipe_view_model.dart';
 import 'view_model/history_view_model.dart';
 
@@ -53,9 +52,8 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      initialRoute: '/',
+      initialRoute: '/login',
       routes: {
-        '/': (context) => SplashScreen(),
         '/login': (context) => LoginPage(),
         '/home': (context) => HomePage(),
       },
@@ -63,14 +61,4 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class LogoWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Image.asset(
-      'assets/images/fridge_logo.png',
-      width: 100,
-      height: 100,
-    );
-  }
-}
 
