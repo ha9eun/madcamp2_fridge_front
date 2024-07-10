@@ -76,10 +76,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   ],
                 ),
                 SizedBox(height: 8),
-                Divider(),
+                Divider(color: Theme.of(context).primaryColor,thickness: 2,),
                 Text(post.content, style: TextStyle(fontSize: 16)),
                 SizedBox(height: 20),
-                Divider(),
+                Divider(color: Theme.of(context).primaryColor,thickness: 2,),
                 Text('댓글', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
