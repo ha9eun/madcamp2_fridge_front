@@ -5,7 +5,6 @@
 
 ![냉장고를 부탁해 배너](https://github.com/ha9eun/madcamp2_fridge_front/assets/146503043/560f44f6-e6e4-4440-8f32-7a5c211603da)
 
-### 아이콘
 
 개발에 몰입하느라 내 냉장고에 뭐가 있는지 기억이 나지 않는 사람..?
 
