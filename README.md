@@ -3,7 +3,7 @@
 ## Outline
 
 
-### 배너
+![냉장고를 부탁해 배너](https://github.com/ha9eun/madcamp2_fridge_front/assets/146503043/560f44f6-e6e4-4440-8f32-7a5c211603da)
 
 ### 아이콘
 
