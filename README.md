@@ -120,6 +120,7 @@ Gemini의 한마디 버튼을 누르면 `gemini API`와 연결되어 입맛을 �
 
 ## ERD
 
+![MyFridgeDB](https://github.com/ha9eun/madcamp2_fridge_front/assets/146503043/42db3b67-2f27-41be-8a29-5b1ae2e5ae96)
 
 
 ## APK File
