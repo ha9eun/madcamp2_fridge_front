@@ -143,7 +143,7 @@ class _CommunityViewState extends State<CommunityView> {
                               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                               decoration: BoxDecoration(
                                 border: Border(
-                                  bottom: BorderSide(color: Colors.grey[300]!, width: 1),
+                                  bottom: BorderSide(color: Theme.of(context).primaryColor, width: 1),
                                 ),
                               ),
                               child: Column(
