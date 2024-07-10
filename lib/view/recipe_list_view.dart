@@ -51,17 +51,6 @@ class _RecipeListViewState extends State<RecipeListView> {
             ),
           ),
           actions: <Widget>[
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-              ),
-              child: Text('제출', style: TextStyle(color: Colors.white)),
-              onPressed: () {
-                FocusScope.of(context).unfocus(); // 키보드 내리기
-                Navigator.of(context).pop();
-                _updateRecommendations(prompt);
-              },
-            ),
             TextButton(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
@@ -71,6 +60,17 @@ class _RecipeListViewState extends State<RecipeListView> {
               onPressed: () {
                 FocusScope.of(context).unfocus(); // 키보드 내리기
                 Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+              ),
+              child: Text('제출', style: TextStyle(color: Colors.white)),
+              onPressed: () {
+                FocusScope.of(context).unfocus(); // 키보드 내리기
+                Navigator.of(context).pop();
+                _updateRecommendations(prompt);
               },
             ),
           ],

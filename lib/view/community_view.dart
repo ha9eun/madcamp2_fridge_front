@@ -122,7 +122,7 @@ class _CommunityViewState extends State<CommunityView> {
                 child: Consumer<CommunityViewModel>(
                   builder: (context, viewModel, child) {
                     if (viewModel.isLoading) {
-                      return Center(child: CircularProgressIndicator());
+                      return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),));
                     } else if (viewModel.filteredBoards.isEmpty) {
                       return Center(child: Text('No posts found'));
                     } else {

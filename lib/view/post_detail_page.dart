@@ -44,7 +44,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
       body: Consumer<CommunityViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.isLoading) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),));
           }
           final post = viewModel.boards.firstWhere((board) => board.boardId == widget.postId);
           final comments = viewModel.comments.where((comment) => comment.boardId == widget.postId).toList();

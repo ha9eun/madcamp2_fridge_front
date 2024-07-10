@@ -79,7 +79,7 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
           future: _loadDataFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),));
             } else if (snapshot.hasError) {
               return Center(child: Text('데이터를 불러오는 중 오류가 발생했습니다.'));
             } else {
@@ -130,7 +130,7 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
                           _buildRecipeSteps(recipe),
                           _buildDottedDivider(),
                           _isLoadingAiComment
-                              ? Center(child: CircularProgressIndicator())
+                              ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),))
                               : _showAiComment
                               ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
