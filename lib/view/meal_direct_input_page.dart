@@ -104,7 +104,9 @@ class _MealDirectInputPageState extends State<MealDirectInputPage> {
               Consumer<RecipeViewModel>(
                 builder: (context, recipeViewModel, child) {
                   if (recipeViewModel.isLoading) {
-                    return CircularProgressIndicator();
+                    return CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                    );
                   } else if (recipeViewModel.recipes.isEmpty) {
                     return Text('레시피가 없습니다.');
                   } else {
