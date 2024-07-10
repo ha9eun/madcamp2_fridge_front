@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:fridge/view_model/ingredient_view_model.dart';
 import 'package:fridge/view_model/user_view_model.dart';
-import 'package:flutter/services.dart';
 
 class AddIngredientDialog extends StatefulWidget {
   @override
@@ -56,14 +54,16 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
         return AlertDialog(
           backgroundColor: Colors.white,
           title: Text(title),
-          content: Text(content,),
+          content: Text(content),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('확인',
-                style: TextStyle(color: Theme.of(context).primaryColor),),
+              child: Text(
+                '확인',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
             ),
           ],
         );
@@ -126,6 +126,8 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                 setState(() {
                   selectedCategory = value;
                   selectedFoodId = null; // 선택된 음식 ID 초기화
+                  selectedUnit = ''; // 선택된 단위 초기화
+                  ingredientController.clear(); // 재료 텍스트 필드 초기화
                   filteredIngredients = ingredientViewModel.allIngredients
                       .where((ingredient) => ingredient['food_category'] == value)
                       .toList();
@@ -172,10 +174,11 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                 });
               },
             ),
-            if (isIngredientFieldFocused && filteredIngredients.isNotEmpty)
+            if (isIngredientFieldFocused)
               Container(
-                height: 150.0,
-                child: ListView.builder(
+                height: 150.0, // 텍스트 입력 중일 때 높이를 고정
+                child: filteredIngredients.isNotEmpty
+                    ? ListView.builder(
                   itemCount: filteredIngredients.length,
                   itemBuilder: (context, index) {
                     final ingredient = filteredIngredients[index];
@@ -192,7 +195,8 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                       },
                     );
                   },
-                ),
+                )
+                    : Center(child: Text('No ingredients found')), // 빈 상태일 때 표시할 내용
               ),
             SizedBox(height: 16.0),
             Row(
@@ -384,6 +388,12 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
                       );
                       if (success) {
                         Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('재료가 성공적으로 추가되었습니다.'),
+                            duration: Duration(seconds: 1),
+                          ),
+                        );
                       } else {
                         _showAlertDialog('', '이미 냉장고에 존재하는 재료입니다.');
                       }
@@ -412,8 +422,6 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
     );
   }
 }
-
-
 
 void showAddIngredientDialog(BuildContext context) {
   showModalBottomSheet(
