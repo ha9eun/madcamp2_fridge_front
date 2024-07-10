@@ -129,7 +129,7 @@ class _CommunityViewState extends State<CommunityView> {
                       return ListView.builder(
                         itemCount: viewModel.filteredBoards.length,
                         itemBuilder: (context, index) {
-                          Board board = viewModel.filteredBoards[index];
+                          Board board = viewModel.filteredBoards.reversed.toList()[index];
                           return GestureDetector(
                             onTap: () {
                               Navigator.push(
