@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart'; // 추가된 import
+import 'package:intl/intl.dart';
 import '../view_model/community_view_model.dart';
 import '../model/board_model.dart';
 import '../model/comment_model.dart';
@@ -41,25 +41,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
     final userId = userViewModel.kakaoId;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('글 상세보기'),
-        actions: [
-          Consumer<CommunityViewModel>(
-            builder: (context, viewModel, child) {
-              final post = viewModel.boards.firstWhere((board) => board.boardId == widget.postId);
-              if (post.writerId == userId) {
-                return IconButton(
-                  icon: Icon(Icons.more_vert),
-                  onPressed: () {
-                    _showPostOptions(post);
-                  },
-                );
-              }
-              return Container();
-            },
-          ),
-        ],
-      ),
       body: Consumer<CommunityViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.isLoading) {
@@ -69,11 +50,23 @@ class _PostDetailPageState extends State<PostDetailPage> {
           final comments = viewModel.comments.where((comment) => comment.boardId == widget.postId).toList();
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(post.title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(post.title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                    if (post.writerId == userId)
+                      IconButton(
+                        icon: Icon(Icons.more_vert),
+                        onPressed: () {
+                          _showPostOptions(post);
+                        },
+                      ),
+                  ],
+                ),
                 SizedBox(height: 8),
                 Row(
                   children: [
@@ -88,7 +81,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 SizedBox(height: 20),
                 Divider(),
                 Text('댓글', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
                 ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -103,7 +95,14 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   controller: commentController,
                   decoration: InputDecoration(
                     labelText: '댓글을 입력하세요',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    labelStyle: TextStyle(color: Colors.black),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                    ),
                   ),
                 ),
                 SizedBox(height: 8),
@@ -125,7 +124,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       commentController.clear();
                     });
                   },
-                  child: Text('댓글 추가'),
+                  child: Text(
+                    '댓글 추가',
+                    style: TextStyle(color: Theme.of(context).primaryColor),
+                  ),
                 ),
               ],
             ),
@@ -136,43 +138,45 @@ class _PostDetailPageState extends State<PostDetailPage> {
   }
 
   Widget _buildCommentTile(Comment comment, String userId) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.grey[300]!),
-        ),
-        padding: EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              comment.writerNickname ?? 'Anonymous',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 5),
-            Text(comment.content),
-            SizedBox(height: 5),
-            Text(formatDateTime(comment.createdAt), style: TextStyle(color: Colors.grey, fontSize: 12)),
-            if (comment.writerId == userId)
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  icon: Icon(Icons.delete, size: 20),
-                  onPressed: () {
-                    Provider.of<CommunityViewModel>(context, listen: false)
-                        .deleteComment(comment.commentId, widget.postId)
-                        .then((_) {
-                      commentController.clear();
-                    });
-                  },
-                ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey[300]!),
               ),
-          ],
+              padding: EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    comment.writerNickname ?? '익명',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 5),
+                  Text(comment.content),
+                  SizedBox(height: 5),
+                  Text(formatDateTime(comment.createdAt), style: TextStyle(color: Colors.grey, fontSize: 12)),
+                ],
+              ),
+            ),
+          ),
         ),
-      ),
+        if (comment.writerId == userId)
+          IconButton(
+            icon: Icon(Icons.more_vert, size: 20),
+            onPressed: () {
+              _showCommentOptions(comment.commentId);
+            },
+          )
+        else
+          SizedBox(width: 48),
+      ],
     );
   }
 
@@ -216,13 +220,13 @@ class _PostDetailPageState extends State<PostDetailPage> {
         return AlertDialog(
           title: Text('삭제 확인'),
           content: Text('이 글을 삭제하시겠습니까?'),
-          backgroundColor: Color(0xFFEEEEEE), // 연한 배경색 설정
+          backgroundColor: Colors.white,
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('취소'),
+              child: Text('취소', style: TextStyle(color: Theme.of(context).primaryColor)),
             ),
             ElevatedButton(
               onPressed: () {
@@ -232,7 +236,59 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   Navigator.pop(context);
                 });
               },
-              child: Text('삭제'),
+              child: Text('삭제', style: TextStyle(color: Theme.of(context).primaryColor)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showCommentOptions(int commentId) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Wrap(
+          children: [
+            ListTile(
+              leading: Icon(Icons.delete),
+              title: Text('삭제'),
+              onTap: () {
+                Navigator.pop(context);
+                _confirmDeleteComment(commentId);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _confirmDeleteComment(int commentId) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('댓글 삭제 확인'),
+          content: Text('이 댓글을 삭제하시겠습니까?'),
+          backgroundColor: Colors.white,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('취소', style: TextStyle(color: Theme.of(context).primaryColor)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Provider.of<CommunityViewModel>(context, listen: false)
+                    .deleteComment(commentId, widget.postId)
+                    .then((_) {
+                  Fluttertoast.showToast(msg: '댓글이 삭제되었습니다');
+                  Navigator.pop(context);
+                });
+              },
+              child: Text('삭제', style: TextStyle(color: Theme.of(context).primaryColor)),
             ),
           ],
         );

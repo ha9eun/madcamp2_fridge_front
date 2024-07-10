@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '냉장고를 부탁해',
       theme: ThemeData(
+        textSelectionTheme: TextSelectionThemeData(cursorColor: Color(0xFF00ADB5)),
         primaryColor: Color(0xFF00ADB5),
         colorScheme: ColorScheme.fromSwatch().copyWith(
           secondary: Color(0xFF393E46),
