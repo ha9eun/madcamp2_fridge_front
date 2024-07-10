@@ -73,6 +73,7 @@ class _EditIngredientDialogState extends State<EditIngredientDialog> {
               children: [
                 Expanded(
                   child: DropdownButtonFormField<int>(
+                    dropdownColor: Colors.white,
                     hint: Text('년'),
                     value: selectedYear,
                     onChanged: (value) {
@@ -93,6 +94,7 @@ class _EditIngredientDialogState extends State<EditIngredientDialog> {
                 ),
                 Expanded(
                   child: DropdownButtonFormField<int>(
+                    dropdownColor: Colors.white,
                     hint: Text('월'),
                     value: selectedMonth,
                     onChanged: (value) {
@@ -111,6 +113,7 @@ class _EditIngredientDialogState extends State<EditIngredientDialog> {
                 ),
                 Expanded(
                   child: DropdownButtonFormField<int>(
+                    dropdownColor: Colors.white,
                     hint: Text('일'),
                     value: selectedDay,
                     onChanged: (value) {
