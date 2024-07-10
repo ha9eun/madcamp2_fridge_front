@@ -61,3 +61,15 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+class LogoWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(
+      'assets/images/fridge_logo.png',
+      width: 100,
+      height: 100,
+    );
+  }
+}
+
