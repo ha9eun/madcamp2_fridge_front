@@ -34,21 +34,23 @@ class _HistoryListViewState extends State<HistoryListView> {
       body: Consumer<HistoryViewModel>(
         builder: (context, historyViewModel, child) {
           if (historyViewModel.isLoading) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+              ),
+            );
           }
 
           return SingleChildScrollView(
+            padding: const EdgeInsets.only(top: 50.0, left: 16.0, right: 16.0, bottom: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 50.0, left: 16.0, right: 16.0, bottom: 0.0),
-                  child: Text(
-                    '나의 식사 히스토리',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                Text(
+                  '나의 식사 히스토리',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 Divider(
@@ -65,7 +67,7 @@ class _HistoryListViewState extends State<HistoryListView> {
                     final reversedIndex = historyViewModel.histories.length - 1 - index;
                     final history = historyViewModel.histories[reversedIndex];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
                       child: Container(
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(

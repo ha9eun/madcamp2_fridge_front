@@ -32,22 +32,25 @@ class _MyPageState extends State<MyPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('로그아웃'),
+          backgroundColor: Colors.white,
+          title: Text('로그아웃', style: TextStyle(fontSize: 20),),
           content: Text('로그아웃 하시겠습니까?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
-              child: Text('취소'),
+              child: Text('취소',
+              style: TextStyle(color: Theme.of(context).primaryColor),),
             ),
             TextButton(
               onPressed: () {
                 final userViewModel = Provider.of<UserViewModel>(context, listen: false);
-                userViewModel.logout(context);
                 Navigator.of(context).pop(); // 다이얼로그 닫기
+                userViewModel.logout(context);
               },
-              child: Text('확인'),
+              child: Text('확인',
+                style: TextStyle(color: Theme.of(context).primaryColor),),
             ),
           ],
         );
