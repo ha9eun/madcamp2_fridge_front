@@ -30,7 +30,7 @@
 
 ## Kakao Login
 
-[### Log In 화면](https://github.com/user-attachments/assets/959fa520-8e15-43f1-8d1d-81f927160fea)
+https://github.com/user-attachments/assets/959fa520-8e15-43f1-8d1d-81f927160fea
 
 `카카오 로그인 API`를 사용해 카카오 계정으로 로그인할 시 자동으로 DB에 유저 정보가 저장됩니다.
 
